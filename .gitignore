@@ -1,2 +1,8 @@
 # JetBrains IDEs
 .idea/
+
+# Python
+*.egg-info/
+*.pyc
+.venv/
+venv/

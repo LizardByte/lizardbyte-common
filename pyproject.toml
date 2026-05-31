@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lizardbyte-common"
+version = "0.0.0"
+description = "Common helper scripts and repository tooling for LizardByte"
+readme = "README.md"
+requires-python = ">=3.14"
+authors = [
+    {name = "LizardByte", email = "lizardbyte@users.noreply.github.com"},
+]
+dependencies = []
+
+[dependency-groups]
+dev = [
+    {include-group = "lint"},
+]
+lint = [
+    "clang-format==21.*",
+]
+
+[project.urls]
+Homepage = "https://github.com/LizardByte/lizardbyte-common"
+Repository = "https://github.com/LizardByte/lizardbyte-common"
+Issues = "https://github.com/LizardByte/lizardbyte-common/issues"
+
+[tool.setuptools]
+py-modules = []
