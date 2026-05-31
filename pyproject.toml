@@ -16,9 +16,14 @@ dependencies = []
 [dependency-groups]
 dev = [
     {include-group = "lint"},
+    {include-group = "test"},
 ]
 lint = [
     "clang-format==21.*",
+]
+test = [
+    "pytest==9.0.3",
+    "pytest-cov==7.1.0",
 ]
 
 [project.urls]
@@ -28,3 +33,44 @@ Issues = "https://github.com/LizardByte/lizardbyte-common/issues"
 
 [tool.setuptools]
 py-modules = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-rxXs",
+    "--tb=native",
+    "--verbose",
+    "--color=yes",
+    "-p", "no:cacheprovider",
+    "--cov=scripts",
+    "--cov-report=term-missing",
+    "--cov-report=xml:coverage/python-coverage.xml",
+    "--cov-fail-under=100",
+    "--junitxml=junit-python.xml",
+    "-o", "junit_family=legacy",
+]
+markers = [
+    "unit: Unit tests",
+]
+
+[tool.coverage.run]
+source = ["scripts"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]

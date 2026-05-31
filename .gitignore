@@ -2,7 +2,13 @@
 .idea/
 
 # Python
+__pycache__/
 *.egg-info/
-*.pyc
+*.py[cod]
+.coverage
+.pytest_cache/
+.pytest-tmp*/
 .venv/
+coverage/
+junit*.xml
 venv/
