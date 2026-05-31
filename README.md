@@ -5,7 +5,7 @@
 
 <div align="center">
   <a href="https://github.com/LizardByte/lizardbyte-common/actions/workflows/ci.yml?query=branch%3Amaster"><img src="https://img.shields.io/github/actions/workflow/status/lizardbyte/lizardbyte-common/ci.yml.svg?branch=master&label=CI&logo=github&style=for-the-badge" alt="CI"></a>
-  <a href="https://app.codecov.io/gh/LizardByte/lizardbyte-common"><img src="https://img.shields.io/codecov/c/gh/LizardByte/lizardbyte-common.svg?style=for-the-badge&logo=codecov&label=codecov" alt="Codecov"></a>
+  <a href="https://codecov.io/gh/LizardByte/lizardbyte-common"><img src="https://img.shields.io/codecov/c/gh/LizardByte/lizardbyte-common?token=3jjWHYBrxB&style=for-the-badge&logo=codecov&label=codecov" alt="Codecov"></a>
 </div>
 
 ## Overview
