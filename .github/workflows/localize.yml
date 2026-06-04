@@ -5,7 +5,7 @@ permissions: {}
 on:
   workflow_call:
     secrets:
-      github_token:
+      GH_TOKEN:
         required: true
 
 env:
@@ -123,7 +123,7 @@ jobs:
         with:
           add-paths: |
             locale/*.po
-          token: ${{ secrets.github_token }}
+          token: ${{ secrets.GH_TOKEN }}
           commit-message: "chore(l10n): new babel updates"
           branch: localize/update
           delete-branch: true

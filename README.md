@@ -65,7 +65,7 @@ jobs:
       contents: read
     uses: LizardByte/lizardbyte-common/.github/workflows/localize.yml@master
     secrets:
-      github_token: ${{ secrets.GH_BOT_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
 ```
 
 ## Tests
