@@ -71,11 +71,11 @@ jobs:
       - name: Sync Python tools
         env:
           UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
-        run: uv sync --locked
+        run: uv sync --locked --only-group test-python
 
       - name: Test with pytest
         id: test
-        run: uv run --locked pytest
+        run: uv run --locked --only-group test-python pytest
 
       - name: Upload test coverage
         # any except canceled or skipped

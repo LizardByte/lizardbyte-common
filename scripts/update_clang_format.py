@@ -1,3 +1,5 @@
+"""Run clang-format across shared C and C++ source directories."""
+
 # standard imports
 import os
 import subprocess
@@ -20,14 +22,26 @@ file_types = [
 
 
 def clang_format(file: str):
+    """Run clang-format on a source file.
+
+    Parameters
+    ----------
+    file : str
+        Source file path to format.
+    """
+
     print(f'Formatting {file} ...')
     subprocess.run(['clang-format', '-i', file], check=True)
 
 
 def main():
+    """Format supported source files in configured directories.
+
+    Notes
+    -----
+    Missing configured directories are ignored by ``os.walk``.
     """
-    Main entry point.
-    """
+
     # walk the directories
     for directory in directories:
         for root, dirs, files in os.walk(directory):
