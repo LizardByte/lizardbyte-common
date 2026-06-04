@@ -15,13 +15,29 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    {include-group = "lint"},
-    {include-group = "test"},
+    {include-group = "c"},
+    {include-group = "lint-python"},
+    {include-group = "test-python"},
 ]
-lint = [
-    "clang-format==21.*",
+c = [
+    {include-group = "lint-c"},
+    {include-group = "locale"},
+    {include-group = "test-c"},
 ]
-test = [
+lint-c = [
+    "clang-format==21.1.8",
+    "cmakelang==0.6.13",
+]
+lint-python = [
+    "flake8==7.3.0",
+]
+locale = [
+    "babel==2.18.0",
+]
+test-c = [
+    "gcovr==8.6",
+]
+test-python = [
     "pytest==9.0.3",
     "pytest-cov==7.1.0",
 ]

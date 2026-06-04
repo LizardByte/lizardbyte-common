@@ -1,3 +1,5 @@
+"""Tests for the clang-format helper."""
+
 # standard imports
 import os
 
@@ -6,6 +8,8 @@ import scripts.update_clang_format as update_clang_format
 
 
 def test_directories_include_expected_roots():
+    """Verify the formatter scans the expected shared source roots."""
+
     assert update_clang_format.directories == [
         'src',
         'tests',
@@ -14,6 +18,8 @@ def test_directories_include_expected_roots():
 
 
 def test_file_types_include_shared_extensions():
+    """Verify the formatter includes shared C and C++ extensions."""
+
     assert update_clang_format.file_types == [
         'c',
         'cpp',
@@ -26,9 +32,13 @@ def test_file_types_include_shared_extensions():
 
 
 def test_clang_format_invokes_clang_format(capsys, monkeypatch):
+    """Verify the formatter delegates to clang-format with the target file."""
+
     calls = []
 
     def fake_run(command, check):
+        """Record clang-format subprocess calls."""
+
         calls.append({
             'check': check,
             'command': command,
@@ -48,6 +58,8 @@ def test_clang_format_invokes_clang_format(capsys, monkeypatch):
 
 
 def test_main_formats_supported_files_only(monkeypatch, tmp_path):
+    """Verify the main scan formats supported files only."""
+
     tmp_root = str(tmp_path)
     files = [
         os.path.join(tmp_root, 'src', 'main.cpp'),
@@ -65,6 +77,8 @@ def test_main_formats_supported_files_only(monkeypatch, tmp_path):
     formatted_files = []
 
     def fake_clang_format(file):
+        """Record files selected for formatting."""
+
         formatted_files.append(file.replace(os.sep, '/'))
 
     monkeypatch.chdir(tmp_root)
