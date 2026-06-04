@@ -12,22 +12,60 @@
 
 This repository contains shared helper scripts and repository-level tooling used across LizardByte projects.
 
-The current tooling is focused on Python-managed C/C++ formatting helpers:
+The current tooling includes Python-managed helpers and reusable GitHub workflows:
 
 - `scripts/update_clang_format.py` runs `clang-format` across supported source directories.
+- `scripts/_locale.py` updates gettext and Babel locale files.
+- `.github/workflows/localize.yml` runs the locale helper from GitHub Actions and opens localization update pull requests.
 
 ## Python Tooling
 
 Install [uv](https://docs.astral.sh/uv/) and sync the locked tool environment:
 
 ```bash
-uv sync
+uv sync --locked
 ```
 
 Run the clang-format helper:
 
 ```bash
-uv run python scripts/update_clang_format.py
+uv run --locked python scripts/update_clang_format.py
+```
+
+Run gettext extraction:
+
+```bash
+uv run --locked --only-group locale python scripts/_locale.py --extract
+```
+
+## Workflows
+
+Reusable GitHub workflows live under `.github/workflows/`.
+
+- `localize.yml` extracts gettext strings with the shared locale helper and can open a localization update pull request.
+
+```yaml
+name: localize
+permissions: {}
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/localize.yml'
+      - 'src/**'
+      - 'locale/sunshine.po'
+  workflow_dispatch:
+
+jobs:
+  localize:
+    name: Update Localization
+    permissions:
+      contents: read
+    uses: LizardByte/lizardbyte-common/.github/workflows/localize.yml@master
+    secrets:
+      github_token: ${{ secrets.GH_BOT_TOKEN }}
 ```
 
 ## Tests
@@ -35,5 +73,5 @@ uv run python scripts/update_clang_format.py
 Run the pytest suite:
 
 ```bash
-uv run pytest
+uv run --locked --only-group test-python pytest
 ```
