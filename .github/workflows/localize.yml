@@ -21,11 +21,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
 
+      - name: Resolve shared workflow checkout
+        id: shared-workflow
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "${JOB_CONTEXT}")"
+          sha="$(jq -r '.workflow_sha // empty' <<< "${JOB_CONTEXT}")"
+
+          if [ -z "${repository}" ] || [ -z "${sha}" ]; then
+            echo "Unable to resolve shared workflow repository and sha from job context." >&2
+            exit 1
+          fi
+
+          echo "repository=${repository}" >> "${GITHUB_OUTPUT}"
+          echo "sha=${sha}" >> "${GITHUB_OUTPUT}"
+
       - name: Checkout lizardbyte-common
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
         with:
-          repository: ${{ job.workflow_repository }}
-          ref: ${{ job.workflow_sha }}
+          repository: ${{ steps.shared-workflow.outputs.repository }}
+          ref: ${{ steps.shared-workflow.outputs.sha }}
           path: .lizardbyte-common
 
       - name: Install Python
