@@ -5,7 +5,7 @@ import datetime
 import os
 
 # local imports
-import scripts._locale as locale
+import scripts.localize as localize
 
 
 def parse_args(*args):
@@ -22,7 +22,7 @@ def parse_args(*args):
         Parsed arguments.
     """
 
-    return locale.build_arg_parser().parse_args(args)
+    return localize.build_arg_parser().parse_args(args)
 
 
 def test_build_context_uses_github_defaults(monkeypatch, tmp_path):
@@ -34,18 +34,18 @@ def test_build_context_uses_github_defaults(monkeypatch, tmp_path):
     monkeypatch.setenv('GITHUB_SERVER_URL', 'https://github.example')
     monkeypatch.setenv('GITHUB_REF_NAME', 'master')
 
-    context = locale.build_context(args=parse_args())
+    context = localize.build_context(args=parse_args())
 
     assert context.root_dir == str(tmp_path)
     assert context.locale_dir == os.path.join(str(tmp_path), 'locale')
     assert context.source_directories == ['src']
-    assert context.extensions == locale.DEFAULT_EXTENSIONS
-    assert context.keywords == locale.DEFAULT_KEYWORDS
+    assert context.extensions == localize.DEFAULT_EXTENSIONS
+    assert context.keywords == localize.DEFAULT_KEYWORDS
     assert context.project_name == 'Example-Repo'
     assert context.project_owner == 'LizardByte'
     assert context.domain == 'example-repo'
     assert context.bugs_address == 'https://github.example/LizardByte/Example-Repo'
-    assert context.language_source_url == locale.LANGUAGES_URL
+    assert context.language_source_url == localize.LANGUAGES_URL
     assert context.target_locales == []
 
 
@@ -85,7 +85,7 @@ def test_build_context_allows_cli_overrides(monkeypatch, tmp_path):
         'https://example.invalid/languages.json',
     )
 
-    context = locale.build_context(args=args)
+    context = localize.build_context(args=args)
 
     assert context.root_dir == str(tmp_path)
     assert context.locale_dir == os.path.join(str(tmp_path), 'i18n')
@@ -196,7 +196,7 @@ def test_parse_target_locales_normalizes_i18n_metadata():
         },
     }
 
-    assert locale.parse_target_locales(language_data=language_data) == [
+    assert localize.parse_target_locales(language_data=language_data) == [
         'bg',
         'cs',
         'de',
@@ -242,7 +242,7 @@ def test_parse_target_locales_handles_missing_optional_metadata():
         },
     }
 
-    assert locale.parse_target_locales(language_data=language_data) == [
+    assert localize.parse_target_locales(language_data=language_data) == [
         'aa',
         'aa_AA',
         'aa_BB',
@@ -293,9 +293,9 @@ def test_load_target_locales_uses_shared_language_metadata(monkeypatch):
         assert timeout == 30
         return FakeResponse()
 
-    monkeypatch.setattr(locale.urllib.request, 'urlopen', fake_urlopen)
+    monkeypatch.setattr(localize.urllib.request, 'urlopen', fake_urlopen)
 
-    assert locale.load_target_locales(
+    assert localize.load_target_locales(
         language_source_url='https://example.invalid/languages.json',
     ) == ['pt', 'pt_BR']
 
@@ -308,10 +308,10 @@ def test_load_target_locales_propagates_source_errors(monkeypatch):
 
         raise OSError('offline')
 
-    monkeypatch.setattr(locale.urllib.request, 'urlopen', fake_urlopen)
+    monkeypatch.setattr(localize.urllib.request, 'urlopen', fake_urlopen)
 
     try:
-        locale.load_target_locales(language_source_url='https://example.invalid/languages.json')
+        localize.load_target_locales(language_source_url='https://example.invalid/languages.json')
     except OSError as err:
         assert str(err) == 'offline'
     else:
@@ -321,8 +321,8 @@ def test_load_target_locales_propagates_source_errors(monkeypatch):
 def test_resolve_path_handles_absolute_and_relative_paths(tmp_path):
     """Verify path resolution handles absolute and relative paths."""
 
-    assert locale.resolve_path(root_dir=str(tmp_path), path='locale') == os.path.join(str(tmp_path), 'locale')
-    assert locale.resolve_path(root_dir='ignored', path=str(tmp_path)) == str(tmp_path)
+    assert localize.resolve_path(root_dir=str(tmp_path), path='locale') == os.path.join(str(tmp_path), 'locale')
+    assert localize.resolve_path(root_dir='ignored', path=str(tmp_path)) == str(tmp_path)
 
 
 def test_discover_locale_codes_returns_sorted_directories(tmp_path):
@@ -333,8 +333,8 @@ def test_discover_locale_codes_returns_sorted_directories(tmp_path):
     with open(os.path.join(str(tmp_path), 'README.md'), mode='w', encoding='utf-8') as file:
         file.write('not a locale directory')
 
-    assert locale.discover_locale_codes(locale_dir=str(tmp_path)) == ['en', 'fr']
-    assert locale.discover_locale_codes(locale_dir=os.path.join(str(tmp_path), 'missing')) == []
+    assert localize.discover_locale_codes(locale_dir=str(tmp_path)) == ['en', 'fr']
+    assert localize.discover_locale_codes(locale_dir=os.path.join(str(tmp_path), 'missing')) == []
 
 
 def test_collect_source_files_scans_existing_source_directories(tmp_path):
@@ -352,7 +352,7 @@ def test_collect_source_files_scans_existing_source_directories(tmp_path):
         with open(file, mode='w', encoding='utf-8') as file_handle:
             file_handle.write('// test\n')
 
-    assert locale.collect_source_files(
+    assert localize.collect_source_files(
         root_dir=root_dir,
         source_directories=['src', 'missing'],
         extensions=['cpp', '.hpp'],
@@ -376,7 +376,7 @@ def test_x_extract_builds_command_and_rewrites_header(monkeypatch, tmp_path):
     with open(os.path.join(root_dir, 'src', 'nested', 'helper.hpp'), mode='w', encoding='utf-8') as file:
         file.write('gettext("World")\n')
 
-    context = locale.build_context(args=parse_args('--root-dir', root_dir, '--project-name', 'Example'))
+    context = localize.build_context(args=parse_args('--root-dir', root_dir, '--project-name', 'Example'))
     calls = []
 
     def fake_check_output(args, cwd):
@@ -392,16 +392,16 @@ def test_x_extract_builds_command_and_rewrites_header(monkeypatch, tmp_path):
             file.write('"Language: \\n"\n')
             file.write('msgid ""\n')
 
-    monkeypatch.setattr(locale.subprocess, 'check_output', fake_check_output)
+    monkeypatch.setattr(localize.subprocess, 'check_output', fake_check_output)
 
-    locale.x_extract(context=context)
+    localize.x_extract(context=context)
 
     current_year = str(datetime.datetime.now().year)
     assert calls == [
         {
             'args': [
                 'xgettext',
-                *[f'--keyword={keyword}' for keyword in locale.DEFAULT_KEYWORDS],
+                *[f'--keyword={keyword}' for keyword in localize.DEFAULT_KEYWORDS],
                 '--default-domain=example',
                 f'--output={os.path.join(context.locale_dir, "example.po")}',
                 '--language=C++',
@@ -429,10 +429,10 @@ def test_x_extract_builds_command_and_rewrites_header(monkeypatch, tmp_path):
 def test_x_extract_requires_source_files(tmp_path):
     """Verify extraction fails clearly when no source files are found."""
 
-    context = locale.build_context(args=parse_args('--root-dir', str(tmp_path)))
+    context = localize.build_context(args=parse_args('--root-dir', str(tmp_path)))
 
     try:
-        locale.x_extract(context=context)
+        localize.x_extract(context=context)
     except RuntimeError as err:
         assert str(err) == 'No source files found for locale extraction.'
     else:
@@ -442,7 +442,7 @@ def test_x_extract_requires_source_files(tmp_path):
 def test_babel_commands(monkeypatch, tmp_path):
     """Verify pybabel commands use the resolved locale context."""
 
-    context = locale.build_context(args=parse_args('--root-dir', str(tmp_path), '--project-name', 'Example'))
+    context = localize.build_context(args=parse_args('--root-dir', str(tmp_path), '--project-name', 'Example'))
     calls = []
 
     def fake_check_output(args, cwd):
@@ -453,11 +453,11 @@ def test_babel_commands(monkeypatch, tmp_path):
             'cwd': cwd,
         })
 
-    monkeypatch.setattr(locale.subprocess, 'check_output', fake_check_output)
+    monkeypatch.setattr(localize.subprocess, 'check_output', fake_check_output)
 
-    locale.babel_init(context=context, locale_code='fr')
-    locale.babel_update(context=context)
-    locale.babel_compile(context=context)
+    localize.babel_init(context=context, locale_code='fr')
+    localize.babel_update(context=context)
+    localize.babel_compile(context=context)
 
     assert calls == [
         {
@@ -506,7 +506,7 @@ def test_babel_commands(monkeypatch, tmp_path):
 def test_init_missing_locales_only_initializes_missing_targets(monkeypatch, tmp_path):
     """Verify locale initialization skips existing targets."""
 
-    context = locale.build_context(args=parse_args('--root-dir', str(tmp_path), '--locale', 'en,fr'))
+    context = localize.build_context(args=parse_args('--root-dir', str(tmp_path), '--locale', 'en,fr'))
     os.makedirs(os.path.join(context.locale_dir, 'en'))
     initialized_locales = []
 
@@ -515,9 +515,9 @@ def test_init_missing_locales_only_initializes_missing_targets(monkeypatch, tmp_
 
         initialized_locales.append(locale_code)
 
-    monkeypatch.setattr(locale, 'babel_init', fake_babel_init)
+    monkeypatch.setattr(localize, 'babel_init', fake_babel_init)
 
-    locale.init_missing_locales(context=context)
+    localize.init_missing_locales(context=context)
 
     assert initialized_locales == ['fr']
 
@@ -525,14 +525,14 @@ def test_init_missing_locales_only_initializes_missing_targets(monkeypatch, tmp_
 def test_init_missing_locales_loads_shared_targets(monkeypatch, tmp_path):
     """Verify locale initialization loads shared targets when none are explicit."""
 
-    context = locale.build_context(args=parse_args('--root-dir', str(tmp_path)))
+    context = localize.build_context(args=parse_args('--root-dir', str(tmp_path)))
     os.makedirs(os.path.join(context.locale_dir, 'en'))
     initialized_locales = []
 
     def fake_load_target_locales(language_source_url):
         """Return fake shared target locales."""
 
-        assert language_source_url == locale.LANGUAGES_URL
+        assert language_source_url == localize.LANGUAGES_URL
         return ['en', 'vi']
 
     def fake_babel_init(context, locale_code):
@@ -540,9 +540,9 @@ def test_init_missing_locales_loads_shared_targets(monkeypatch, tmp_path):
 
         initialized_locales.append(locale_code)
 
-    monkeypatch.setattr(locale, 'load_target_locales', fake_load_target_locales)
-    monkeypatch.setattr(locale, 'babel_init', fake_babel_init)
+    monkeypatch.setattr(localize, 'load_target_locales', fake_load_target_locales)
+    monkeypatch.setattr(localize, 'babel_init', fake_babel_init)
 
-    locale.init_missing_locales(context=context)
+    localize.init_missing_locales(context=context)
 
     assert initialized_locales == ['vi']

@@ -71,7 +71,7 @@ jobs:
           echo "NEW_FILE=${new_file}" >> "${GITHUB_ENV}"
 
           uv run --project .lizardbyte-common --frozen --only-group locale --no-sync \
-            python .lizardbyte-common/scripts/_locale.py --root-dir "${GITHUB_WORKSPACE}" --extract
+            python .lizardbyte-common/scripts/localize.py --root-dir "${GITHUB_WORKSPACE}" --extract
 
       - name: git diff
         if: env.NEW_FILE == 'false'

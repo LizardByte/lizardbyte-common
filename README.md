@@ -15,7 +15,7 @@ This repository contains shared helper scripts and repository-level tooling used
 The current tooling includes Python-managed helpers and reusable GitHub workflows:
 
 - `scripts/update_clang_format.py` runs `clang-format` across supported source directories.
-- `scripts/_locale.py` updates gettext and Babel locale files.
+- `scripts/localize.py` updates gettext and Babel locale files.
 - `.github/workflows/localize.yml` runs the locale helper from GitHub Actions and opens localization update pull requests.
 
 ## Python Tooling
@@ -35,7 +35,7 @@ uv run --locked python scripts/update_clang_format.py
 Run gettext extraction:
 
 ```bash
-uv run --locked --only-group locale python scripts/_locale.py --extract
+uv run --locked --only-group locale python scripts/localize.py --extract
 ```
 
 ## Workflows
