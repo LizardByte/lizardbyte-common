@@ -4,8 +4,23 @@
 import datetime
 import os
 
+# lib imports
+import pytest
+
 # local imports
 import scripts.localize as localize
+
+
+@pytest.fixture
+def clean_github_environment(monkeypatch):
+    """Remove GitHub runner variables that affect locale context defaults."""
+
+    for variable in [
+        'GITHUB_REPOSITORY',
+        'GITHUB_REPOSITORY_OWNER',
+        'GITHUB_SERVER_URL',
+    ]:
+        monkeypatch.delenv(variable, raising=False)
 
 
 def parse_args(*args):
@@ -362,12 +377,8 @@ def test_collect_source_files_scans_existing_source_directories(tmp_path):
     ]
 
 
-def test_x_extract_builds_command_and_rewrites_header(monkeypatch, tmp_path):
+def test_x_extract_builds_command_and_rewrites_header(clean_github_environment, monkeypatch, tmp_path):
     """Verify xgettext extraction builds command arguments and rewrites headers."""
-
-    monkeypatch.delenv('GITHUB_REPOSITORY', raising=False)
-    monkeypatch.delenv('GITHUB_REPOSITORY_OWNER', raising=False)
-    monkeypatch.delenv('GITHUB_SERVER_URL', raising=False)
 
     root_dir = str(tmp_path)
     os.makedirs(os.path.join(root_dir, 'src', 'nested'))
@@ -424,6 +435,53 @@ def test_x_extract_builds_command_and_rewrites_header(monkeypatch, tmp_path):
             f'# Copyright (C) {current_year} Example\n'
             'msgid ""\n'
         )
+
+
+def test_x_extract_allows_empty_extraction(clean_github_environment, monkeypatch, tmp_path):
+    """Verify extraction succeeds when xgettext has no messages to write."""
+
+    root_dir = str(tmp_path)
+    os.makedirs(os.path.join(root_dir, 'src'))
+    with open(os.path.join(root_dir, 'src', 'main.cpp'), mode='w', encoding='utf-8') as file:
+        file.write('int main() { return 0; }\n')
+
+    context = localize.build_context(args=parse_args('--root-dir', root_dir, '--project-name', 'Example'))
+    calls = []
+
+    def fake_check_output(args, cwd):
+        """Record xgettext calls without creating a template file."""
+
+        calls.append({
+            'args': args,
+            'cwd': cwd,
+        })
+
+    monkeypatch.setattr(localize.subprocess, 'check_output', fake_check_output)
+
+    localize.x_extract(context=context)
+
+    assert calls == [
+        {
+            'args': [
+                'xgettext',
+                *[f'--keyword={keyword}' for keyword in localize.DEFAULT_KEYWORDS],
+                '--default-domain=example',
+                f'--output={os.path.join(context.locale_dir, "example.po")}',
+                '--language=C++',
+                '--boost',
+                '--from-code=utf-8',
+                '-F',
+                '--msgid-bugs-address=https://github.com/Example/Example',
+                '--copyright-holder=Example',
+                '--package-name=Example',
+                '--package-version=v0',
+                os.path.join('src', 'main.cpp'),
+            ],
+            'cwd': root_dir,
+        },
+    ]
+    assert os.path.isdir(context.locale_dir)
+    assert not os.path.exists(os.path.join(context.locale_dir, 'example.po'))
 
 
 def test_x_extract_requires_source_files(tmp_path):
