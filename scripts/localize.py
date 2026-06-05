@@ -509,6 +509,10 @@ def x_extract(context: LocaleContext):
     ]
 
     run_command(command=command, root_dir=context.root_dir)
+    if not os.path.exists(pot_filepath):
+        print(f'No gettext messages found; {pot_filepath} was not generated.')
+        return
+
     rewrite_pot_header(context=context, pot_filepath=pot_filepath)
 
 
