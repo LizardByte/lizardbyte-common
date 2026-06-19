@@ -6,6 +6,7 @@ import subprocess
 
 # variables
 directories = [
+    'examples',
     'src',
     'tests',
     'tools',

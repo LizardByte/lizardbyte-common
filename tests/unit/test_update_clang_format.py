@@ -11,6 +11,7 @@ def test_directories_include_expected_roots():
     """Verify the formatter scans the expected shared source roots."""
 
     assert update_clang_format.directories == [
+        'examples',
         'src',
         'tests',
         'tools',
