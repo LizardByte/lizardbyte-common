@@ -29,13 +29,51 @@ uv sync --locked
 Run the clang-format helper:
 
 ```bash
-uv run --locked --only-group c lizardbyte-update-clang-format
+uv run --locked --only-group c lb-update-clang-format
 ```
 
 Run gettext extraction:
 
 ```bash
-uv run --locked --only-group locale lizardbyte-localize --extract
+uv run --locked --only-group locale lb-localize --extract
+```
+
+## Consuming Projects
+
+Projects with a `pyproject.toml` can use this repository as a local path dependency. For a submodule at
+`third-party/lizardbyte-common`, add the dependency and source to the consuming project's `pyproject.toml`:
+
+```toml
+[project]
+dependencies = [
+    "lizardbyte-common[c]",
+]
+
+[tool.uv.sources]
+lizardbyte-common = { path = "third-party/lizardbyte-common" }
+```
+
+Then sync and run the installed commands from the consuming project root:
+
+```bash
+uv sync --python 3.14
+uv run lb-update-clang-format
+uv run lb-localize --extract
+```
+
+Projects without a `pyproject.toml` can still create a `.venv` in the consuming project root and install
+the local checkout into it:
+
+```bash
+uv venv --python 3.14
+uv pip install --editable "third-party/lizardbyte-common[c]"
+```
+
+Then run the commands from the consuming project root:
+
+```bash
+lb-update-clang-format
+lb-localize --extract
 ```
 
 ## Workflows

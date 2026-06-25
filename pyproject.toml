@@ -14,8 +14,8 @@ authors = [
 dependencies = []
 
 [project.scripts]
-lizardbyte-localize = "scripts.localize:main"
-lizardbyte-update-clang-format = "scripts.update_clang_format:main"
+lb-localize = "scripts.localize:main"
+lb-update-clang-format = "scripts.update_clang_format:main"
 
 [project.optional-dependencies]
 dev = [
