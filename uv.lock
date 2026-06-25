@@ -163,6 +163,40 @@ name = "lizardbyte-common"
 version = "0.0.0"
 source = { editable = "." }
 
+[package.optional-dependencies]
+c = [
+    { name = "babel" },
+    { name = "clang-format" },
+    { name = "cmakelang" },
+    { name = "gcovr" },
+]
+dev = [
+    { name = "babel" },
+    { name = "clang-format" },
+    { name = "cmakelang" },
+    { name = "flake8" },
+    { name = "gcovr" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
+lint-c = [
+    { name = "clang-format" },
+    { name = "cmakelang" },
+]
+lint-python = [
+    { name = "flake8" },
+]
+locale = [
+    { name = "babel" },
+]
+test-c = [
+    { name = "gcovr" },
+]
+test-python = [
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
+
 [package.dev-dependencies]
 c = [
     { name = "babel" },
@@ -198,6 +232,22 @@ test-python = [
 ]
 
 [package.metadata]
+requires-dist = [
+    { name = "babel", marker = "extra == 'locale'", specifier = "==2.18.0" },
+    { name = "clang-format", marker = "extra == 'lint-c'", specifier = "==21.1.8" },
+    { name = "cmakelang", marker = "extra == 'lint-c'", specifier = "==0.6.13" },
+    { name = "flake8", marker = "extra == 'lint-python'", specifier = "==7.3.0" },
+    { name = "gcovr", marker = "extra == 'test-c'", specifier = "==8.6" },
+    { name = "lizardbyte-common", extras = ["c"], marker = "extra == 'dev'" },
+    { name = "lizardbyte-common", extras = ["lint-c"], marker = "extra == 'c'" },
+    { name = "lizardbyte-common", extras = ["lint-python"], marker = "extra == 'dev'" },
+    { name = "lizardbyte-common", extras = ["locale"], marker = "extra == 'c'" },
+    { name = "lizardbyte-common", extras = ["test-c"], marker = "extra == 'c'" },
+    { name = "lizardbyte-common", extras = ["test-python"], marker = "extra == 'dev'" },
+    { name = "pytest", marker = "extra == 'test-python'", specifier = "==9.0.3" },
+    { name = "pytest-cov", marker = "extra == 'test-python'", specifier = "==7.1.0" },
+]
+provides-extras = ["dev", "c", "lint-c", "lint-python", "locale", "test-c", "test-python"]
 
 [package.metadata.requires-dev]
 c = [
