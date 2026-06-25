@@ -29,13 +29,13 @@ uv sync --locked
 Run the clang-format helper:
 
 ```bash
-uv run --locked python scripts/update_clang_format.py
+uv run --locked --only-group c lizardbyte-update-clang-format
 ```
 
 Run gettext extraction:
 
 ```bash
-uv run --locked --only-group locale python scripts/localize.py --extract
+uv run --locked --only-group locale lizardbyte-localize --extract
 ```
 
 ## Workflows

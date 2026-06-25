@@ -58,8 +58,7 @@ jobs:
         run: |
           uv sync --project .lizardbyte-common --frozen --only-group locale \
             --python "${PYTHON_VERSION}" \
-            --no-python-downloads \
-            --no-install-project
+            --no-python-downloads
 
       - name: Set up xgettext
         run: |
@@ -87,7 +86,7 @@ jobs:
           echo "NEW_FILE=${new_file}" >> "${GITHUB_ENV}"
 
           uv run --project .lizardbyte-common --frozen --only-group locale --no-sync \
-            python .lizardbyte-common/scripts/localize.py --root-dir "${GITHUB_WORKSPACE}" --extract
+            lizardbyte-localize --root-dir "${GITHUB_WORKSPACE}" --extract
 
       - name: git diff
         if: env.NEW_FILE == 'false'

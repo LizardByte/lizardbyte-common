@@ -13,6 +13,10 @@ authors = [
 ]
 dependencies = []
 
+[project.scripts]
+lizardbyte-localize = "scripts.localize:main"
+lizardbyte-update-clang-format = "scripts.update_clang_format:main"
+
 [project.optional-dependencies]
 dev = [
     "lizardbyte-common[c]",
@@ -77,7 +81,7 @@ Repository = "https://github.com/LizardByte/lizardbyte-common"
 Issues = "https://github.com/LizardByte/lizardbyte-common/issues"
 
 [tool.setuptools]
-py-modules = []
+packages = ["scripts"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
