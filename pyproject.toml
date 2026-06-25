@@ -13,6 +13,39 @@ authors = [
 ]
 dependencies = []
 
+[project.scripts]
+lb-localize = "scripts.localize:main"
+lb-update-clang-format = "scripts.update_clang_format:main"
+
+[project.optional-dependencies]
+dev = [
+    "lizardbyte-common[c]",
+    "lizardbyte-common[lint-python]",
+    "lizardbyte-common[test-python]",
+]
+c = [
+    "lizardbyte-common[lint-c]",
+    "lizardbyte-common[locale]",
+    "lizardbyte-common[test-c]",
+]
+lint-c = [
+    "clang-format==21.1.8",
+    "cmakelang==0.6.13",
+]
+lint-python = [
+    "flake8==7.3.0",
+]
+locale = [
+    "babel==2.18.0",
+]
+test-c = [
+    "gcovr==8.6",
+]
+test-python = [
+    "pytest==9.0.3",
+    "pytest-cov==7.1.0",
+]
+
 [dependency-groups]
 dev = [
     {include-group = "c"},
@@ -48,7 +81,7 @@ Repository = "https://github.com/LizardByte/lizardbyte-common"
 Issues = "https://github.com/LizardByte/lizardbyte-common/issues"
 
 [tool.setuptools]
-py-modules = []
+packages = ["scripts"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
