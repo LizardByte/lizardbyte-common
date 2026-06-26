@@ -56,7 +56,8 @@ jobs:
 
       - name: Sync Python tools
         run: |
-          uv sync --project .lizardbyte-common --frozen --only-group locale \
+          uv sync --project .lizardbyte-common --frozen --group locale \
+            --no-default-groups \
             --python "${PYTHON_VERSION}" \
             --no-python-downloads
 
@@ -85,7 +86,8 @@ jobs:
           fi
           echo "NEW_FILE=${new_file}" >> "${GITHUB_ENV}"
 
-          uv run --project .lizardbyte-common --frozen --only-group locale --no-sync \
+          uv run --project .lizardbyte-common --frozen --group locale \
+            --no-default-groups --no-sync \
             lb-localize --root-dir "${GITHUB_WORKSPACE}" --extract
 
       - name: git diff
