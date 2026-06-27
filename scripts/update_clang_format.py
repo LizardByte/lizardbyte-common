@@ -1,4 +1,4 @@
-"""Run clang-format across shared C and C++ source directories."""
+"""Run clang-format across shared C, C++, Objective-C, and CUDA source directories."""
 
 # standard imports
 import os
@@ -15,6 +15,7 @@ file_types = [
     'c',
     'cpp',
     'cu',
+    'cuh',
     'h',
     'hpp',
     'm',

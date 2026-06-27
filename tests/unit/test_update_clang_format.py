@@ -19,12 +19,13 @@ def test_directories_include_expected_roots():
 
 
 def test_file_types_include_shared_extensions():
-    """Verify the formatter includes shared C and C++ extensions."""
+    """Verify the formatter includes shared source extensions."""
 
     assert update_clang_format.file_types == [
         'c',
         'cpp',
         'cu',
+        'cuh',
         'h',
         'hpp',
         'm',
@@ -65,6 +66,7 @@ def test_main_formats_supported_files_only(monkeypatch, tmp_path):
     files = [
         os.path.join(tmp_root, 'src', 'main.cpp'),
         os.path.join(tmp_root, 'src', 'nested', 'kernel.cu'),
+        os.path.join(tmp_root, 'src', 'nested', 'kernel.cuh'),
         os.path.join(tmp_root, 'tests', 'test_helper.mm'),
         os.path.join(tmp_root, 'tools', 'tool.h'),
         os.path.join(tmp_root, 'tools', 'notes.txt'),
@@ -90,6 +92,7 @@ def test_main_formats_supported_files_only(monkeypatch, tmp_path):
     assert set(formatted_files) == {
         'src/main.cpp',
         'src/nested/kernel.cu',
+        'src/nested/kernel.cuh',
         'tests/test_helper.mm',
         'tools/tool.h',
     }
