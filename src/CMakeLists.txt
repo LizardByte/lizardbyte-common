@@ -13,15 +13,15 @@ set_target_properties(
   lizardbyte_common PROPERTIES EXPORT_NAME common OUTPUT_NAME lizardbyte-common)
 
 if(MSVC)
-  target_compile_options(lizardbyte_common PRIVATE /W4)
-  if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
-    target_compile_options(lizardbyte_common PRIVATE /WX)
-  endif()
+    target_compile_options(lizardbyte_common PRIVATE /W4)
+    if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
+        target_compile_options(lizardbyte_common PRIVATE /WX)
+    endif()
 else()
-  target_compile_options(lizardbyte_common PRIVATE -Wall -Wextra -Wpedantic)
-  if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
-    target_compile_options(lizardbyte_common PRIVATE -Werror)
-  endif()
+    target_compile_options(lizardbyte_common PRIVATE -Wall -Wextra -Wpedantic)
+    if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
+        target_compile_options(lizardbyte_common PRIVATE -Werror)
+    endif()
 endif()
 
 install(

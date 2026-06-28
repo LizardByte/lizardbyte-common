@@ -16,14 +16,14 @@ set_target_properties(lizardbyte_common_test_support
                       PROPERTIES OUTPUT_NAME lizardbyte-common-test-support)
 
 if(MSVC)
-  target_compile_options(lizardbyte_common_test_support PRIVATE /W4)
-  if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
-    target_compile_options(lizardbyte_common_test_support PRIVATE /WX)
-  endif()
+    target_compile_options(lizardbyte_common_test_support PRIVATE /W4)
+    if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
+        target_compile_options(lizardbyte_common_test_support PRIVATE /WX)
+    endif()
 else()
-  target_compile_options(lizardbyte_common_test_support PRIVATE -Wall -Wextra
-                                                                -Wpedantic)
-  if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
-    target_compile_options(lizardbyte_common_test_support PRIVATE -Werror)
-  endif()
+    target_compile_options(lizardbyte_common_test_support PRIVATE -Wall -Wextra
+                                                                  -Wpedantic)
+    if(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS)
+        target_compile_options(lizardbyte_common_test_support PRIVATE -Werror)
+    endif()
 endif()

@@ -16,14 +16,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(LIZARDBYTE_COMMON_IS_TOP_LEVEL OFF)
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  set(LIZARDBYTE_COMMON_IS_TOP_LEVEL ON)
+    set(LIZARDBYTE_COMMON_IS_TOP_LEVEL ON)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE
-      "Release"
-      CACHE STRING "Choose the type of build." FORCE)
+    message(STATUS "Setting build type to 'Release' as none was specified.")
+    set(CMAKE_BUILD_TYPE
+        "Release"
+        CACHE STRING "Choose the type of build." FORCE)
 endif()
 
 #
@@ -50,8 +50,8 @@ include(GNUInstallDirs)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME
    AND BUILD_TESTS
    AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage -ggdb -O0")
-  set(CMAKE_C_FLAGS "-fprofile-arcs -ftest-coverage -ggdb -O0")
+    set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage -ggdb -O0")
+    set(CMAKE_C_FLAGS "-fprofile-arcs -ftest-coverage -ggdb -O0")
 endif()
 
 #
@@ -64,34 +64,32 @@ add_subdirectory(src)
 # Test support may be used by consuming projects
 #
 if(LIZARDBYTE_COMMON_BUILD_TEST_SUPPORT)
-  set(INSTALL_GTEST OFF)
-  set(INSTALL_GMOCK OFF)
-  if(WIN32)
-    # cmake-lint: disable=C0103
-    set(gtest_force_shared_crt
-        ON
-        CACHE BOOL "Always use msvcrt.dll" FORCE)
-  endif()
+    set(INSTALL_GTEST OFF)
+    set(INSTALL_GMOCK OFF)
+    if(WIN32)
+        set(gtest_force_shared_crt ON CACHE BOOL  # cmake-lint: disable=C0103
+            "Always use msvcrt.dll" FORCE)
+    endif()
 
-  if(NOT TARGET gtest)
-    add_subdirectory(third-party/googletest third-party/googletest)
-  endif()
+    if(NOT TARGET gtest)
+        add_subdirectory(third-party/googletest third-party/googletest)
+    endif()
 
-  add_subdirectory(tests/support)
+    add_subdirectory(tests/support)
 endif()
 
 #
 # Tests and docs are top-level only
 #
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-  if(BUILD_DOCS)
-    add_subdirectory(third-party/doxyconfig docs)
-  endif()
+    if(BUILD_DOCS)
+        add_subdirectory(third-party/doxyconfig docs)
+    endif()
 
-  if(BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-  endif()
+    if(BUILD_TESTS)
+        enable_testing()
+        add_subdirectory(tests)
+    endif()
 endif()
 
 #
