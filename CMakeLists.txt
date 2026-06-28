@@ -30,6 +30,9 @@ endif()
 # Project optional configuration
 #
 option(BUILD_TESTS "Build tests" ${LIZARDBYTE_COMMON_IS_TOP_LEVEL})
+option(BUILD_DOCS "Build documentation" ${LIZARDBYTE_COMMON_IS_TOP_LEVEL})
+option(LIZARDBYTE_COMMON_BUILD_TEST_SUPPORT "Build GoogleTest support helpers"
+       ${BUILD_TESTS})
 option(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS
        "Treat lizardbyte-common warnings as errors"
        ${LIZARDBYTE_COMMON_IS_TOP_LEVEL})
@@ -58,11 +61,37 @@ endif()
 add_subdirectory(src)
 
 #
-# Tests are top-level only
+# Test support may be used by consuming projects
 #
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
-  enable_testing()
-  add_subdirectory(tests)
+if(LIZARDBYTE_COMMON_BUILD_TEST_SUPPORT)
+  set(INSTALL_GTEST OFF)
+  set(INSTALL_GMOCK OFF)
+  if(WIN32)
+    # cmake-lint: disable=C0103
+    set(gtest_force_shared_crt
+        ON
+        CACHE BOOL "Always use msvcrt.dll" FORCE)
+  endif()
+
+  if(NOT TARGET gtest)
+    add_subdirectory(third-party/googletest third-party/googletest)
+  endif()
+
+  add_subdirectory(tests/support)
+endif()
+
+#
+# Tests and docs are top-level only
+#
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  if(BUILD_DOCS)
+    add_subdirectory(third-party/doxyconfig docs)
+  endif()
+
+  if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+  endif()
 endif()
 
 #

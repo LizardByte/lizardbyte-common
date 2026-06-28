@@ -43,6 +43,12 @@ namespace lizardbyte::common {
 #endif
   }
 
+  std::string get_env(const std::string &name) {
+    std::string value;
+    static_cast<void>(get_env(name, value));
+    return value;
+  }
+
   int set_env(const std::string &name, const std::string &value) {
     if (!is_valid_name(name)) {
       return EINVAL;

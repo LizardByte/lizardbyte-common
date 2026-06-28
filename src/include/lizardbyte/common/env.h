@@ -17,6 +17,13 @@ namespace lizardbyte::common {
   [[nodiscard]] bool get_env(const std::string &name, std::string &value);
 
   /**
+   * @brief Get an environment variable.
+   * @param name The name of the environment variable.
+   * @return Environment variable value, or an empty string if the variable does not exist.
+   */
+  [[nodiscard]] std::string get_env(const std::string &name);
+
+  /**
    * @brief Set an environment variable.
    * @param name The name of the environment variable.
    * @param value The value to set the environment variable to.
