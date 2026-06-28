@@ -89,7 +89,7 @@ jobs:
           disable_search: true
           fail_ci_if_error: true
           files: ./coverage/python-coverage.xml
-          flags: ${{ runner.os }}
+          flags: ${{ runner.os }}-python
           report_type: coverage
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
@@ -105,7 +105,7 @@ jobs:
           disable_search: true
           fail_ci_if_error: true
           files: ./junit-python.xml
-          flags: ${{ runner.os }}
+          flags: ${{ runner.os }}-python
           report_type: test_results
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
