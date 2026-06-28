@@ -156,45 +156,6 @@ using MacOSTest = ::lizardbyte::common::testing::MacOSTest;
 using WindowsTest = ::lizardbyte::common::testing::WindowsTest;
 #endif
 
-/** @cond */
-#define LB_DETAIL_CAT_IMPL(part_1, part_2) part_1##part_2
-#define LB_DETAIL_CAT(part_1, part_2) LB_DETAIL_CAT_IMPL(part_1, part_2)
-#define LB_DETAIL_JOIN_1(part_1) part_1
-#define LB_DETAIL_JOIN_2(part_1, part_2) LB_DETAIL_CAT(LB_DETAIL_CAT(part_1, _), part_2)
-#define LB_DETAIL_JOIN_3(part_1, part_2, part_3) LB_DETAIL_JOIN_2(LB_DETAIL_JOIN_2(part_1, part_2), part_3)
-#define LB_DETAIL_JOIN_4(part_1, part_2, part_3, part_4) \
-  LB_DETAIL_JOIN_2(LB_DETAIL_JOIN_3(part_1, part_2, part_3), part_4)
-#define LB_DETAIL_JOIN_5(part_1, part_2, part_3, part_4, part_5) \
-  LB_DETAIL_JOIN_2(LB_DETAIL_JOIN_4(part_1, part_2, part_3, part_4), part_5)
-#define LB_DETAIL_JOIN_6(part_1, part_2, part_3, part_4, part_5, part_6) \
-  LB_DETAIL_JOIN_2(LB_DETAIL_JOIN_5(part_1, part_2, part_3, part_4, part_5), part_6)
-#define LB_DETAIL_JOIN_7(part_1, part_2, part_3, part_4, part_5, part_6, part_7) \
-  LB_DETAIL_JOIN_2(LB_DETAIL_JOIN_6(part_1, part_2, part_3, part_4, part_5, part_6), part_7)
-#define LB_DETAIL_JOIN_8(part_1, part_2, part_3, part_4, part_5, part_6, part_7, part_8) \
-  LB_DETAIL_JOIN_2(LB_DETAIL_JOIN_7(part_1, part_2, part_3, part_4, part_5, part_6, part_7), part_8)
-
-#define LB_DETAIL_GET_9TH_ARG(_1, _2, _3, _4, _5, _6, _7, _8, _9, ...) _9
-#define LB_DETAIL_COUNT_ARGS(...) LB_DETAIL_GET_9TH_ARG(__VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1)
-#define LB_DETAIL_JOIN_DISPATCH(count, ...) LB_DETAIL_JOIN_DISPATCH_IMPL(count, __VA_ARGS__)
-#define LB_DETAIL_JOIN_DISPATCH_IMPL(count, ...) LB_DETAIL_JOIN_##count(__VA_ARGS__)
-/** @endcond */
-
-/**
- * @brief Concatenate variadic macro arguments with underscore separators.
- */
-#define LB_CAT_VA_ARGS(...) LB_DETAIL_JOIN_DISPATCH(LB_DETAIL_COUNT_ARGS(__VA_ARGS__), __VA_ARGS__)
-
-/**
- * @brief Create a test name from multiple macro arguments.
- *
- * Usage:
- * @code
- * #define TEST_S(...) LB_MAKE_TEST(TEST, MySuite, __VA_ARGS__)
- * TEST_S(Does, The, Thing) {}
- * @endcode
- */
-#define LB_MAKE_TEST(test_macro, test_suite_name, ...) test_macro(test_suite_name, LB_CAT_VA_ARGS(__VA_ARGS__))
-
 #if !defined(LIZARDBYTE_COMMON_TESTING_KEEP_GTEST_TEST)
   #undef TEST  // NOSONAR(cpp:S959): Tests intentionally wrap TEST to use BaseTest.
 

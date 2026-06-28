@@ -68,8 +68,6 @@ namespace {
   };
 }  // namespace
 
-#define TESTING_SUPPORT_TEST(...) LB_MAKE_TEST(TEST, TestingSupportMacroTest, __VA_ARGS__)
-
 TEST(TestingSupportTest, DefaultTestMacroUsesBaseFixture) {
   EXPECT_TRUE(isOutputSuppressed());
   std::cout << "captured cout";
@@ -107,10 +105,6 @@ TEST_F(SystemTestFixture, RespectsSkipSystemTestsEnvironment) {
 TEST_F(TestableBaseTest, HelpersAreAvailableOnDerivedFixtures) {
   EXPECT_TRUE(isOutputSuppressed());
   EXPECT_FALSE(isSystemTest());
-}
-
-TESTING_SUPPORT_TEST(Joins, Multiple, Name, Parts) {
-  SUCCEED();
 }
 
 TEST_F(LinuxTest, SkipsOrRunsLinuxFixture) {
