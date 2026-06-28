@@ -109,12 +109,43 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  cmake:
+    name: CMake (${{ matrix.os }})
+    needs:
+      - release-setup
+    permissions:
+      contents: read
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - name: Configure
+        run: cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE:STRING=Debug -B cmake-build-ci -S .
+
+      - name: Build
+        run: cmake --build cmake-build-ci --config Debug --parallel 2
+
+      - name: Test
+        run: ctest --test-dir cmake-build-ci --build-config Debug --output-on-failure
+
+      - name: Install
+        run: cmake --install cmake-build-ci --config Debug --prefix cmake-build-ci/install
+
   create-release:
     name: Create Release
     if: >-
       (github.event_name == 'push' && github.ref == 'refs/heads/master') &&
       needs.release-setup.outputs.publish_release == 'true'
     needs:
+      - cmake
       - release-setup
       - pytest
     permissions: {}

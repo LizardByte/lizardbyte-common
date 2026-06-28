@@ -16,13 +16,15 @@
 
 ## Overview
 
-This repository contains shared helper scripts and repository-level tooling used across LizardByte projects.
+This repository contains shared helper scripts, repository-level tooling, and C++ helpers used across LizardByte
+projects.
 
-The current tooling includes Python-managed helpers and reusable GitHub workflows:
+The current tooling includes Python-managed helpers, reusable GitHub workflows, and a small C++ helper library:
 
 - `scripts/update_clang_format.py` runs `clang-format` across supported source directories.
 - `scripts/localize.py` updates gettext and Babel locale files.
 - `.github/workflows/localize.yml` runs the locale helper from GitHub Actions and opens localization update pull requests.
+- `lizardbyte::common` provides shared C++ helpers, starting with environment variable manipulation.
 
 ## Python Tooling
 
@@ -42,6 +44,27 @@ Run gettext extraction:
 
 ```bash
 uv run --locked --only-group locale lb-localize --extract
+```
+
+## C++ Tooling
+
+Configure, build, and test the C++ helpers with CMake:
+
+```bash
+cmake -DBUILD_TESTS=ON -B build -S .
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
+```
+
+The C++ library exports the `lizardbyte::common` target and public headers under `lizardbyte/common/`.
+
+```cpp
+#include <lizardbyte/common/env.h>
+
+std::string value;
+if (lizardbyte::common::get_env("MY_ENV", value)) {
+  lizardbyte::common::append_env("MY_ENV", "suffix", ";");
+}
 ```
 
 ## Consuming Projects
@@ -80,6 +103,13 @@ Then run the commands from the consuming project root:
 ```bash
 lb-update-clang-format
 lb-localize --extract
+```
+
+CMake projects can consume the C++ helpers from the same submodule:
+
+```cmake
+add_subdirectory(third-party/lizardbyte-common)
+target_link_libraries(my_target PRIVATE lizardbyte::common)
 ```
 
 ## Workflows
