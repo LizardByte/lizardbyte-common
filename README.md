@@ -190,3 +190,8 @@ cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B build -S .
 cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
+
+<details style="display: none;">
+  <summary></summary>
+  [TOC]
+</details>
