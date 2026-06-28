@@ -16,13 +16,16 @@
 
 ## Overview
 
-This repository contains shared helper scripts and repository-level tooling used across LizardByte projects.
+This repository contains shared helper scripts, repository-level tooling, and C++ helpers used across LizardByte
+projects.
 
-The current tooling includes Python-managed helpers and reusable GitHub workflows:
+The current tooling includes Python-managed helpers, reusable GitHub workflows, and a small C++ helper library:
 
 - `scripts/update_clang_format.py` runs `clang-format` across supported source directories.
 - `scripts/localize.py` updates gettext and Babel locale files.
 - `.github/workflows/localize.yml` runs the locale helper from GitHub Actions and opens localization update pull requests.
+- `lizardbyte::common` provides shared C++ helpers, starting with environment variable manipulation.
+- `lizardbyte::test_support` provides shared GoogleTest fixtures and test macros for LizardByte C++ projects.
 
 ## Python Tooling
 
@@ -42,6 +45,50 @@ Run gettext extraction:
 
 ```bash
 uv run --locked --only-group locale lb-localize --extract
+```
+
+## C++ Tooling
+
+Initialize submodules before configuring the C++ targets:
+
+```bash
+git submodule update --init --recursive
+```
+
+Configure, build, and test the C++ helpers with CMake:
+
+```bash
+cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B build -S .
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
+```
+
+The C++ library exports the `lizardbyte::common` target and public headers under `lizardbyte/common/`.
+
+```cpp
+#include <lizardbyte/common/env.h>
+
+std::string value;
+if (lizardbyte::common::get_env("MY_ENV", value)) {
+  lizardbyte::common::append_env("MY_ENV", "suffix", ";");
+}
+```
+
+The optional test support target is available when `BUILD_TESTS=ON` or `LIZARDBYTE_COMMON_BUILD_TEST_SUPPORT=ON`.
+
+```cpp
+#include <lizardbyte/common/testing.h>
+
+TEST(MySuite, CapturesOutputUntilFailure) {
+  std::cout << "only printed when this test fails";
+}
+```
+
+Build the Doxygen documentation through the shared doxyconfig submodule:
+
+```bash
+cmake -DBUILD_DOCS=ON -DBUILD_TESTS=OFF -B build/docs -S .
+cmake --build build/docs --target docs
 ```
 
 ## Consuming Projects
@@ -82,6 +129,22 @@ lb-update-clang-format
 lb-localize --extract
 ```
 
+CMake projects can consume the C++ helpers from the same submodule:
+
+```cmake
+add_subdirectory(third-party/lizardbyte-common)
+target_link_libraries(my_target PRIVATE lizardbyte::common)
+```
+
+To consume the shared GoogleTest support helpers from a project that already builds tests, link the test binary to
+`lizardbyte::test_support`:
+
+```cmake
+set(LIZARDBYTE_COMMON_BUILD_TEST_SUPPORT ON)
+add_subdirectory(third-party/lizardbyte-common)
+target_link_libraries(my_test_binary PRIVATE lizardbyte::test_support)
+```
+
 ## Workflows
 
 Reusable GitHub workflows live under `.github/workflows/`.
@@ -119,3 +182,16 @@ Run the pytest suite:
 ```bash
 uv run --locked --only-group test-python pytest
 ```
+
+Run the C++ GoogleTest suite:
+
+```bash
+cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B build -S .
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
+```
+
+<details style="display: none;">
+  <summary></summary>
+  [TOC]
+</details>
