@@ -148,4 +148,55 @@ namespace lizardbyte::common::testing {
     BaseTest::SetUp();
 #endif
   }
+
+  void BufferedTestEventListener::OnTestStart(const ::testing::TestInfo &test_info) {
+    const std::string file {test_info.file() == nullptr ? "" : test_info.file()};
+    logTestEvent("From " + file + ":" + std::to_string(test_info.line()));
+    logTestEvent("  " + std::string {test_info.test_suite_name()} + "/" + test_info.name() + " started");
+  }
+
+  void BufferedTestEventListener::OnTestPartResult(const ::testing::TestPartResult &test_part_result) {
+    const std::string file {test_part_result.file_name() == nullptr ? "" : test_part_result.file_name()};
+    logTestEvent("At " + file + ":" + std::to_string(test_part_result.line_number()));
+
+    const std::string result_text {
+      test_part_result.passed()            ? "Success" :
+      test_part_result.nonfatally_failed() ? "Non-fatal failure" :
+      test_part_result.fatally_failed()    ? "Failure" :
+                                             "Skip"
+    };
+
+    const std::string summary {test_part_result.summary()};
+    const std::string message {test_part_result.message()};
+    logTestEvent("  " + result_text + ": " + summary);
+    if (message != summary) {
+      logTestEvent("  " + message);
+    }
+  }
+
+  void BufferedTestEventListener::OnTestEnd(const ::testing::TestInfo &test_info) {
+    const auto &result {*test_info.result()};
+    const std::string result_text {result.Passed() ? "passed" : result.Skipped() ? "skipped" :
+                                                                                   "failed"};
+    logTestEvent(std::string {test_info.test_suite_name()} + "/" + test_info.name() + " " + result_text);
+
+    if (result.Failed()) {
+      std::cout << bufferedTestOutput();
+    }
+
+    clearBufferedTestOutput();
+  }
+
+  void BufferedTestEventListener::logTestEvent(const std::string &message) {
+    event_buffer_ << message << std::endl;
+  }
+
+  std::string BufferedTestEventListener::bufferedTestOutput() const {
+    return event_buffer_.str();
+  }
+
+  void BufferedTestEventListener::clearBufferedTestOutput() {
+    event_buffer_.str({});
+    event_buffer_.clear();
+  }
 }  // namespace lizardbyte::common::testing

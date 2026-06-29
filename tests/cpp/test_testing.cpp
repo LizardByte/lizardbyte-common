@@ -66,6 +66,16 @@ namespace {
       return false;
     }
   };
+
+  class TestableBufferedTestEventListener: public BufferedTestEventListener {
+  public:
+    using BufferedTestEventListener::clearBufferedTestOutput;
+    using BufferedTestEventListener::logTestEvent;
+
+    [[nodiscard]] std::string output() const {
+      return bufferedTestOutput();
+    }
+  };
 }  // namespace
 
 TEST(TestingSupportTest, DefaultTestMacroUsesBaseFixture) {
@@ -105,6 +115,17 @@ TEST_F(SystemTestFixture, RespectsSkipSystemTestsEnvironment) {
 TEST_F(TestableBaseTest, HelpersAreAvailableOnDerivedFixtures) {
   EXPECT_TRUE(isOutputSuppressed());
   EXPECT_FALSE(isSystemTest());
+}
+
+TEST(TestingSupportTest, BufferedEventListenerOutputCanBeCustomized) {
+  TestableBufferedTestEventListener listener;
+
+  listener.logTestEvent("first line");
+  listener.logTestEvent("second line");
+  EXPECT_EQ(listener.output(), "first line\nsecond line\n");
+
+  listener.clearBufferedTestOutput();
+  EXPECT_TRUE(listener.output().empty());
 }
 
 TEST_F(LinuxTest, SkipsOrRunsLinuxFixture) {

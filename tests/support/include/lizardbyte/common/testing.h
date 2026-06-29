@@ -132,6 +132,51 @@ namespace lizardbyte::common::testing {
      */
     void SetUp() override;
   };
+
+  /**
+   * @brief GoogleTest event listener that buffers test log output until a test fails.
+   */
+  class BufferedTestEventListener: public ::testing::EmptyTestEventListener {
+  public:
+    /**
+     * @brief Handle the start of a test.
+     * @param test_info GoogleTest test information.
+     */
+    void OnTestStart(const ::testing::TestInfo &test_info) override;
+
+    /**
+     * @brief Handle a test assertion result.
+     * @param test_part_result GoogleTest assertion result.
+     */
+    void OnTestPartResult(const ::testing::TestPartResult &test_part_result) override;
+
+    /**
+     * @brief Handle the end of a test.
+     * @param test_info GoogleTest test information.
+     */
+    void OnTestEnd(const ::testing::TestInfo &test_info) override;
+
+  protected:
+    /**
+     * @brief Add a test event line to the buffer.
+     * @param message Message to buffer.
+     */
+    virtual void logTestEvent(const std::string &message);
+
+    /**
+     * @brief Get buffered test output.
+     * @return Buffered output.
+     */
+    [[nodiscard]] virtual std::string bufferedTestOutput() const;
+
+    /**
+     * @brief Clear buffered test output.
+     */
+    virtual void clearBufferedTestOutput();
+
+  private:
+    std::stringstream event_buffer_; /**< Stores event log output while tests run. */
+  };
 }  // namespace lizardbyte::common::testing
 
 #if !defined(LIZARDBYTE_COMMON_TESTING_NO_GLOBAL_ALIASES)
@@ -154,6 +199,11 @@ using MacOSTest = ::lizardbyte::common::testing::MacOSTest;
  * @brief Global compatibility alias for the shared Windows-only test fixture.
  */
 using WindowsTest = ::lizardbyte::common::testing::WindowsTest;
+
+/**
+ * @brief Global compatibility alias for the shared buffered test event listener.
+ */
+using BufferedTestEventListener = ::lizardbyte::common::testing::BufferedTestEventListener;
 #endif
 
 #if !defined(LIZARDBYTE_COMMON_TESTING_KEEP_GTEST_TEST)
