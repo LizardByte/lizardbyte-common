@@ -29,7 +29,7 @@ namespace lizardbyte::common {
    * @param value The value to set the environment variable to.
    * @return 0 on success, non-zero on failure.
    */
-  [[nodiscard]] int set_env(const std::string &name, const std::string &value);
+  int set_env(const std::string &name, const std::string &value);
 
   /**
    * @brief Append a string to an environment variable if it does not already contain it.
@@ -38,12 +38,12 @@ namespace lizardbyte::common {
    * @param separator Optional separator for the new value if it is not the first one.
    * @return 0 on success, non-zero on failure.
    */
-  [[nodiscard]] int append_env(const std::string &name, const std::string &value, const std::string &separator = "");
+  int append_env(const std::string &name, const std::string &value, const std::string &separator = "");
 
   /**
    * @brief Unset an environment variable.
    * @param name The name of the environment variable.
    * @return 0 on success, non-zero on failure.
    */
-  [[nodiscard]] int unset_env(const std::string &name);
+  int unset_env(const std::string &name);
 }  // namespace lizardbyte::common
