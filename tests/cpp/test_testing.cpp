@@ -4,6 +4,7 @@
  */
 
 // standard includes
+#include <cstdio>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -21,6 +22,8 @@ namespace {
     using BaseTest::isOutputSuppressed;
     using BaseTest::isSystemTest;
     using BaseTest::skipTest;
+    using BaseTest::stderrBuffer;
+    using BaseTest::stdoutBuffer;
   };
 
   class EnvGuard {
@@ -67,6 +70,15 @@ namespace {
     }
   };
 
+  class StdioCaptureFixture: public TestableBaseTest {
+  protected:
+    void TearDown() override {
+      BaseTest::TearDown();
+      EXPECT_EQ(stdoutBuffer().str(), "captured stdout");
+      EXPECT_EQ(stderrBuffer().str(), "captured stderr");
+    }
+  };
+
   class TestableBufferedTestEventListener: public BufferedTestEventListener {
   public:
     using BufferedTestEventListener::clearBufferedTestOutput;
@@ -84,6 +96,13 @@ TEST(TestingSupportTest, DefaultTestMacroUsesBaseFixture) {
   std::cerr << "captured cerr";
   EXPECT_EQ(coutBuffer().str(), "captured cout");
   EXPECT_EQ(cerrBuffer().str(), "captured cerr");
+}
+
+TEST_F(StdioCaptureFixture, CapturesStdoutAndStderr) {
+  std::printf("captured stdout");
+  std::fprintf(stderr, "captured stderr");
+  std::fflush(stdout);
+  std::fflush(stderr);
 }
 
 TEST(TestingSupportTest, ArgumentMatchingCanReturnFullArgument) {
