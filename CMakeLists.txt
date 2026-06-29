@@ -33,6 +33,9 @@ option(BUILD_TESTS "Build tests" ${LIZARDBYTE_COMMON_IS_TOP_LEVEL})
 option(BUILD_DOCS "Build documentation" ${LIZARDBYTE_COMMON_IS_TOP_LEVEL})
 option(LIZARDBYTE_COMMON_BUILD_TEST_SUPPORT "Build GoogleTest support helpers"
        ${BUILD_TESTS})
+option(LIZARDBYTE_COMMON_INSTALL
+       "Install lizardbyte-common targets and package configuration"
+       OFF)
 option(LIZARDBYTE_COMMON_WARNINGS_AS_ERRORS
        "Treat lizardbyte-common warnings as errors"
        ${LIZARDBYTE_COMMON_IS_TOP_LEVEL})
@@ -95,17 +98,19 @@ endif()
 #
 # Package config
 #
-configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lizardbyte-common-config.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config.cmake"
-  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/lizardbyte-common")
+if(LIZARDBYTE_COMMON_INSTALL)
+    configure_package_config_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lizardbyte-common-config.cmake.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config.cmake"
+      INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/lizardbyte-common")
 
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config-version.cmake"
-  VERSION ${PROJECT_VERSION}
-  COMPATIBILITY SameMajorVersion)
+    write_basic_package_version_file(
+      "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config-version.cmake"
+      VERSION ${PROJECT_VERSION}
+      COMPATIBILITY SameMajorVersion)
 
-install(
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config-version.cmake"
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/lizardbyte-common")
+    install(
+      FILES "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/lizardbyte-common-config-version.cmake"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/lizardbyte-common")
+endif()

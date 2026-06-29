@@ -24,17 +24,19 @@ else()
     endif()
 endif()
 
-install(
-  TARGETS lizardbyte_common
-  EXPORT lizardbyte-common-targets
-  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+if(LIZARDBYTE_COMMON_INSTALL)
+    install(
+      TARGETS lizardbyte_common
+      EXPORT lizardbyte-common-targets
+      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/src/include/"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+    install(DIRECTORY "${PROJECT_SOURCE_DIR}/src/include/"
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
-install(
-  EXPORT lizardbyte-common-targets
-  NAMESPACE lizardbyte::
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/lizardbyte-common")
+    install(
+      EXPORT lizardbyte-common-targets
+      NAMESPACE lizardbyte::
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/lizardbyte-common")
+endif()
