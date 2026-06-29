@@ -4,9 +4,13 @@
  */
 
 // standard includes
+#include <cstdio>
 #include <iostream>
 #include <iterator>
 #include <regex>
+
+// lib includes
+#include <gtest/internal/gtest-port.h>
 
 // platform includes
 #if defined(__linux__)
@@ -19,17 +23,32 @@
 
 namespace lizardbyte::common::testing {
   void BaseTest::SetUp() {
+    test_skipped_at_setup_ = false;
+    output_suppressed_ = false;
+    stdout_capture_active_ = false;
+    stderr_capture_active_ = false;
+
     cout_buffer_.str({});
     cout_buffer_.clear();
     cerr_buffer_.str({});
     cerr_buffer_.clear();
+    stdout_buffer_.str({});
+    stdout_buffer_.clear();
+    stderr_buffer_.str({});
+    stderr_buffer_.clear();
 
     if (const auto skip_reason {skipTest()}; !skip_reason.empty()) {
       test_skipped_at_setup_ = true;
       GTEST_SKIP() << skip_reason;
     }
 
-    if (isOutputSuppressed()) {
+    output_suppressed_ = isOutputSuppressed();
+    if (output_suppressed_) {
+      ::testing::internal::CaptureStdout();
+      stdout_capture_active_ = true;
+      ::testing::internal::CaptureStderr();
+      stderr_capture_active_ = true;
+
       cout_streambuf_ = std::cout.rdbuf();
       cerr_streambuf_ = std::cerr.rdbuf();
       std::cout.rdbuf(cout_buffer_.rdbuf());
@@ -42,7 +61,12 @@ namespace lizardbyte::common::testing {
       return;
     }
 
-    if (isOutputSuppressed()) {
+    if (output_suppressed_) {
+      std::cout.flush();
+      std::cerr.flush();
+      std::fflush(stdout);
+      std::fflush(stderr);
+
       if (cout_streambuf_ != nullptr) {
         std::cout.rdbuf(cout_streambuf_);
         cout_streambuf_ = nullptr;
@@ -53,6 +77,16 @@ namespace lizardbyte::common::testing {
         cerr_streambuf_ = nullptr;
       }
 
+      if (stdout_capture_active_) {
+        stdout_buffer_ << ::testing::internal::GetCapturedStdout();
+        stdout_capture_active_ = false;
+      }
+
+      if (stderr_capture_active_) {
+        stderr_buffer_ << ::testing::internal::GetCapturedStderr();
+        stderr_capture_active_ = false;
+      }
+
       const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
       if (test_info != nullptr && test_info->result()->Failed()) {
         std::cout << std::endl
@@ -61,8 +95,14 @@ namespace lizardbyte::common::testing {
                   << "Captured cout:" << std::endl
                   << cout_buffer_.str() << std::endl
                   << "Captured cerr:" << std::endl
-                  << cerr_buffer_.str() << std::endl;
+                  << cerr_buffer_.str() << std::endl
+                  << "Captured stdout:" << std::endl
+                  << stdout_buffer_.str() << std::endl
+                  << "Captured stderr:" << std::endl
+                  << stderr_buffer_.str() << std::endl;
       }
+
+      output_suppressed_ = false;
     }
   }
 
@@ -110,6 +150,14 @@ namespace lizardbyte::common::testing {
 
   std::stringstream &BaseTest::cerrBuffer() {
     return cerr_buffer_;
+  }
+
+  std::stringstream &BaseTest::stdoutBuffer() {
+    return stdout_buffer_;
+  }
+
+  std::stringstream &BaseTest::stderrBuffer() {
+    return stderr_buffer_;
   }
 
   void LinuxTest::SetUp() {

@@ -17,7 +17,7 @@ namespace lizardbyte::common::testing {
   /**
    * @brief Base class used by default for shared tests.
    *
-   * ``cout`` and ``cerr`` are redirected during tests and printed when a test fails.
+   * ``cout``, ``cerr``, ``stdout``, and ``stderr`` are redirected during tests and printed when a test fails.
    */
   class BaseTest: public ::testing::Test {
   protected:
@@ -85,12 +85,29 @@ namespace lizardbyte::common::testing {
      */
     [[nodiscard]] std::stringstream &cerrBuffer();
 
+    /**
+     * @brief Get captured stdout.
+     * @return Captured stdout stream.
+     */
+    [[nodiscard]] std::stringstream &stdoutBuffer();
+
+    /**
+     * @brief Get captured stderr.
+     * @return Captured stderr stream.
+     */
+    [[nodiscard]] std::stringstream &stderrBuffer();
+
   private:
     std::stringstream cout_buffer_; /**< Stores cout while output is suppressed. */
     std::stringstream cerr_buffer_; /**< Stores cerr while output is suppressed. */
+    std::stringstream stdout_buffer_; /**< Stores stdout while output is suppressed. */
+    std::stringstream stderr_buffer_; /**< Stores stderr while output is suppressed. */
     std::streambuf *cout_streambuf_ {nullptr}; /**< Original cout stream buffer. */
     std::streambuf *cerr_streambuf_ {nullptr}; /**< Original cerr stream buffer. */
     bool test_skipped_at_setup_ {false}; /**< True when SetUp skipped before redirection. */
+    bool output_suppressed_ {false}; /**< True when output capture was enabled in SetUp. */
+    bool stdout_capture_active_ {false}; /**< True when GoogleTest stdout capture is active. */
+    bool stderr_capture_active_ {false}; /**< True when GoogleTest stderr capture is active. */
   };
 
   /**
