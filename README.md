@@ -5,16 +5,19 @@
     width="256"
   />
   <h1 align="center">lizardbyte-common</h1>
-  <h4 align="center">Common helper scripts and repository tooling for LizardByte projects</h4>
+  <h4 align="center">Common library and helpers for LizardByte projects.</h4>
 </div>
 
 <div align="center">
+  <a href="https://github.com/LizardByte/lizardbyte-common"><img src="https://img.shields.io/github/stars/lizardbyte/lizardbyte-common.svg?logo=github&style=for-the-badge" alt="GitHub stars"></a>
   <a href="https://github.com/LizardByte/lizardbyte-common/actions/workflows/ci.yml?query=branch%3Amaster"><img src="https://img.shields.io/github/actions/workflow/status/lizardbyte/lizardbyte-common/ci.yml.svg?branch=master&label=CI&logo=github&style=for-the-badge" alt="CI"></a>
-  <a href="https://codecov.io/gh/LizardByte/lizardbyte-common"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fapp.lizardbyte.dev%2Fdashboard%2Fshields%2Fcodecov%2Flizardbyte-common.json&style=for-the-badge&logo=codecov" alt="Codecov"></a>
-  <a href="https://sonarcloud.io/project/overview?id=LizardByte_lizardbyte-common"><img src="https://img.shields.io/sonar/quality_gate/LizardByte_lizardbyte-common?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarqubecloud&label=sonarcloud" alt="SonarCloud"></a>
+  <a href="https://codecov.io/gh/LizardByte/lizardbyte-common"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fapp.lizardbyte.dev%2Fdashboard%2Fshields%2Fcodecov%2Flizardbyte-common.json&style=for-the-badge&logo=codecov" alt="Codecov"></a>
+  <a href="https://sonarcloud.io/project/overview?id=LizardByte_lizardbyte-common"><img src="https://img.shields.io/sonar/quality_gate/LizardByte_lizardbyte-common.svg?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarqubecloud&label=sonarcloud" alt="SonarCloud"></a>
 </div>
 
-## Overview
+# Overview
+
+## ℹ️ About
 
 This repository contains shared helper scripts, repository-level tooling, and C++ helpers used across LizardByte
 projects.
@@ -27,7 +30,7 @@ The current tooling includes Python-managed helpers, reusable GitHub workflows, 
 - `lizardbyte::common` provides shared C++ helpers, starting with environment variable manipulation.
 - `lizardbyte::test_support` provides shared GoogleTest fixtures and test macros for LizardByte C++ projects.
 
-## Python Tooling
+## ⚙️ Python Tooling
 
 Install [uv](https://docs.astral.sh/uv/) and sync the locked tool environment:
 
@@ -91,7 +94,7 @@ cmake -DBUILD_DOCS=ON -DBUILD_TESTS=OFF -B build/docs -S .
 cmake --build build/docs --target docs
 ```
 
-## Consuming Projects
+## 📐 Consuming Projects
 
 Projects with a `pyproject.toml` can use this repository as a local path dependency. For a submodule at
 `third-party/lizardbyte-common`, add the dependency and source to the consuming project's `pyproject.toml`:
@@ -145,7 +148,7 @@ add_subdirectory(third-party/lizardbyte-common)
 target_link_libraries(my_test_binary PRIVATE lizardbyte::test_support)
 ```
 
-## Workflows
+## ♾️ Workflows
 
 Reusable GitHub workflows live under `.github/workflows/`.
 
@@ -175,7 +178,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
 ```
 
-## Tests
+## 🧪 Tests
 
 Run the pytest suite:
 
