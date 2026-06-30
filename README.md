@@ -50,7 +50,7 @@ Run gettext extraction:
 uv run --locked --only-group locale lb-localize --extract
 ```
 
-## C++ Tooling
+## 🗜️ C++ Tooling
 
 Initialize submodules before configuring the C++ targets:
 
