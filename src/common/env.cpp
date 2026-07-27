@@ -17,6 +17,11 @@ namespace lizardbyte::common {
     }
   }  // namespace
 
+  bool is_github_actions() {
+    std::string value;
+    return get_env("GITHUB_ACTIONS", value);
+  }
+
   bool get_env(const std::string &name, std::string &value) {
     if (!is_valid_name(name)) {
       return false;

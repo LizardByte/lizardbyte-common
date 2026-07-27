@@ -75,6 +75,10 @@ std::string value;
 if (lizardbyte::common::get_env("MY_ENV", value)) {
   lizardbyte::common::append_env("MY_ENV", "suffix", ";");
 }
+
+if (lizardbyte::common::is_github_actions()) {
+  // Apply GitHub Actions-specific behavior.
+}
 ```
 
 The optional test support target is available when `BUILD_TESTS=ON` or `LIZARDBYTE_COMMON_BUILD_TEST_SUPPORT=ON`.
