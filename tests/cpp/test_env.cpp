@@ -15,6 +15,7 @@
 
 namespace {
   constexpr auto test_env_name {"LIZARDBYTE_COMMON_TEST_ENV"};
+  constexpr auto github_actions_env_name {"GITHUB_ACTIONS"};
 
   class EnvGuard {
   public:
@@ -38,6 +39,19 @@ namespace {
     bool had_value_;
   };
 }  // namespace
+
+TEST(EnvTest, GitHubActionsIsFalseWhenEnvironmentVariableIsMissing) {
+  EnvGuard guard {github_actions_env_name};
+
+  EXPECT_FALSE(lizardbyte::common::is_github_actions());
+}
+
+TEST(EnvTest, GitHubActionsIsTrueWhenEnvironmentVariableExists) {
+  EnvGuard guard {github_actions_env_name};
+
+  ASSERT_EQ(lizardbyte::common::set_env(github_actions_env_name, "true"), 0);
+  EXPECT_TRUE(lizardbyte::common::is_github_actions());
+}
 
 TEST(EnvTest, GetEnvReturnsFalseForMissingVariable) {
   EnvGuard guard {test_env_name};

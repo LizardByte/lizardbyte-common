@@ -9,6 +9,12 @@
 
 namespace lizardbyte::common {
   /**
+   * @brief Check whether the current process is running in GitHub Actions.
+   * @return true if the ``GITHUB_ACTIONS`` environment variable exists, false otherwise.
+   */
+  [[nodiscard]] bool is_github_actions();
+
+  /**
    * @brief Get an environment variable.
    * @param name The name of the environment variable.
    * @param value Reference to write the environment variable value into.
