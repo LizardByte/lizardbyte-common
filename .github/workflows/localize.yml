@@ -56,10 +56,16 @@ jobs:
 
       - name: Sync Python tools
         run: |
-          uv sync --project .lizardbyte-common --frozen --group locale \
-            --no-default-groups \
-            --python "${PYTHON_VERSION}" \
+          uv_sync_args=(
+            --project .lizardbyte-common
+            --frozen
+            --group locale
+            --no-default-groups
+            --python "${PYTHON_VERSION}"
             --no-python-downloads
+          )
+          # The workflow SHA pins reviewed project code; building it installs the required lb-* entry points.
+          uv sync "${uv_sync_args[@]}"  # NOSONAR(githubactions:S8541)
 
       - name: Set up xgettext
         run: |
