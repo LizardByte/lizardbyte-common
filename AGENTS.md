@@ -20,7 +20,7 @@ Public production headers live under `src/include/lizardbyte/common/`.
 
 Shared test-support headers live under `tests/support/include/lizardbyte/common/`.
 
-Documentation uses the shared `third-party/doxyconfig` submodule and Read the Docs configuration.
+Documentation uses the `third-party/dockle` submodule, `dockle.toml`, and Read the Docs configuration.
 
 Always update public documentation when changing headers or consumer-facing behavior.
 

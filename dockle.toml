@@ -1,0 +1,21 @@
+[project]
+name = "lizardbyte-common"
+version = "0.0.0"
+description = "Common helpers and tooling for LizardByte projects."
+repository = "https://github.com/LizardByte/lizardbyte-common"
+
+[build]
+output = "_site"
+work = ".dockle"
+strict = true
+clean = true
+
+[[targets]]
+name = "api"
+title = "lizardbyte-common documentation"
+framework = "doxygen"
+source = "."
+
+[targets.doxygen]
+inputs = ["README.md", "src/include", "tests/support/include"]
+main_page = "README.md"
