@@ -301,6 +301,10 @@ __marimo__/
 # Project specific
 #
 
+# Dockle
+/.dockle/
+/_site/
+
 # JetBrains IDEs (PyCharm, CLion, etc.)
 .idea/
 
