@@ -3,6 +3,7 @@ name = "lizardbyte-common"
 version = "0.0.0"
 description = "Common helpers and tooling for LizardByte projects."
 repository = "https://github.com/LizardByte/lizardbyte-common"
+logo = "https://raw.githubusercontent.com/LizardByte/.github/refs/heads/master/branding/logos/logo.svg"
 
 [build]
 output = "_site"
@@ -15,6 +16,7 @@ name = "api"
 title = "lizardbyte-common documentation"
 framework = "doxygen"
 source = "."
+home = true
 
 [targets.doxygen]
 inputs = ["README.md", "src/include", "tests/support/include"]
