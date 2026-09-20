@@ -91,7 +91,7 @@ TEST(MySuite, CapturesOutputUntilFailure) {
 }
 ```
 
-Build the Doxygen documentation through the shared doxyconfig submodule:
+Build the Doxygen documentation through Dockle:
 
 ```bash
 cmake -DBUILD_DOCS=ON -DBUILD_TESTS=OFF -B build/docs -S .
@@ -197,8 +197,3 @@ cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B build -S .
 cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
-
-<details style="display: none;">
-  <summary></summary>
-  [TOC]
-</details>
