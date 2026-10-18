@@ -379,8 +379,8 @@ jobs:
         run: |
           cmake -S tests/consumer -B cmake-build-consumer -A x64 `
             -DCMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/cmake-build-install/install"
-          cmake --build cmake-build-consumer --config Debug
-          ./cmake-build-consumer/Debug/logging_consumer.exe
+          cmake --build cmake-build-consumer --config Release
+          ./cmake-build-consumer/Release/logging_consumer.exe
 
       - name: Upload report artifact
         if: >-
@@ -443,7 +443,9 @@ jobs:
 
       - name: Rust coverage
         if: runner.os == 'Linux'
-        run: cargo llvm-cov --locked --all-targets --cobertura --output-path coverage/rust-coverage.xml
+        run: |
+          mkdir -p coverage
+          cargo llvm-cov --locked --all-targets --cobertura --output-path coverage/rust-coverage.xml
 
       - name: Upload Rust coverage
         if: runner.os == 'Linux'
