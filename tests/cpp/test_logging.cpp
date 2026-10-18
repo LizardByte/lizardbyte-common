@@ -60,11 +60,18 @@ TEST(LoggingFormat, MatchesSharedGoldenBytes) {
   for (const auto level : {spdlog::level::trace, spdlog::level::debug, spdlog::level::info, spdlog::level::warn, spdlog::level::err, spdlog::level::critical}) {
     actual += render(formatter, level, "network", u8"héllo");
   }
-  actual += render(formatter, spdlog::level::info, "net]\n", "secret-long\r\nnext\t\033[31m\r");
-  actual += render(formatter, spdlog::level::info, "", "", "", 0);
+  actual += render(formatter, spdlog::level::info, "net]\n", "secret-long\r\nnext\t\033[31m");
+  actual += render(formatter, spdlog::level::info, "", "metadata absent", "", 0);
   EXPECT_EQ(actual, read_file(std::filesystem::path(LOGGING_FIXTURE_DIR) / "logging-format.txt"));
   auto cloned = formatter.clone();
   EXPECT_NE(cloned, nullptr);
+}
+
+TEST(LoggingFormat, PreservesEmptyMessagesAndTrailingNewlines) {
+  logging::Formatter formatter;
+  const std::string prefix = "1970-01-01T00:00:00.123Z [INFO] [app] [unknown:?] ";
+  EXPECT_EQ(render(formatter, spdlog::level::info, "", "", "", 0), prefix + '\n');
+  EXPECT_EQ(render(formatter, spdlog::level::info, "", "x\r", "", 0), prefix + "x\n" + prefix + '\n');
 }
 
 TEST(LoggingFormat, ResolvesProjectRootWithoutWorkingDirectory) {

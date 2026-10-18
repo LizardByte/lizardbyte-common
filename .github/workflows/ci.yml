@@ -403,6 +403,9 @@ jobs:
     permissions:
       contents: read
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
@@ -418,7 +421,8 @@ jobs:
 
       - name: Set up Rust
         run: |
-          rustup toolchain install stable --profile minimal --component clippy,rustfmt,llvm-tools-preview --no-self-update
+          rustup toolchain install stable --profile minimal \
+            --component clippy,rustfmt,llvm-tools-preview --no-self-update
           rustup default stable
 
       - name: Check formatting

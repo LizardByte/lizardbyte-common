@@ -22,10 +22,17 @@ def record(level=logging.INFO, name='network', message='héllo', file='/workspac
 def test_shared_golden_bytes():
     formatter = common.Formatter('/workspace/project', secrets=['secret', 'secret-long', ''])
     actual = ''.join(formatter.format(record(level)) + '\n' for level in [5, 10, 20, 30, 40, 50])
-    actual += formatter.format(record(name='net]\n', message='secret-long\r\nnext\t\x1b[31m\r')) + '\n'
-    actual += formatter.format(record(name='', message='', file='', line=0)) + '\n'
+    actual += formatter.format(record(name='net]\n', message='secret-long\r\nnext\t\x1b[31m')) + '\n'
+    actual += formatter.format(record(name='', message='metadata absent', file='', line=0)) + '\n'
     fixture = Path(__file__).parents[1] / 'fixtures/logging-format.txt'
     assert actual.encode() == fixture.read_bytes()
+
+
+def test_empty_messages_and_trailing_newlines():
+    prefix = '1970-01-01T00:00:00.123Z [INFO] [app] [unknown:?] '
+    formatter = common.Formatter()
+    assert formatter.format(record(name='', message='', file='', line=0)) == prefix
+    assert formatter.format(record(name='', message='x\r', file='', line=0)) == prefix + 'x\n' + prefix
 
 
 @pytest.mark.parametrize(('file', 'root', 'expected'), [
@@ -70,7 +77,8 @@ def test_traceback_stack_and_cached_exception_are_redacted():
     value.stack_info = 'stack secret'
     formatter = common.Formatter(secrets=['secret'])
     output = formatter.format(value)
-    assert 'ValueError: ***' in output and 'stack ***' in output
+    assert 'ValueError: ***' in output
+    assert 'stack ***' in output
     assert 'secret' not in output
     assert value.args == ('secret',)
     value.exc_info = None
@@ -128,7 +136,9 @@ def test_multiple_named_loggers_independent_sinks_and_callbacks():
     loggers[0].debug('ignored')
     loggers[0].info('first message')
     loggers[1].warning('secret')
-    assert len(received) == 1 and '[second]' in received[0] and '***' in received[0]
+    assert len(received) == 1
+    assert '[second]' in received[0]
+    assert '***' in received[0]
     assert received[0].endswith('\n')
     assert 'ignored' not in stream.getvalue()
 

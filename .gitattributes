@@ -1,2 +1,2 @@
-# Golden output is byte-for-byte UTF-8/LF, including intentionally empty messages.
-tests/fixtures/logging-format.txt text eol=lf whitespace=-blank-at-eol
+# Golden output is byte-for-byte UTF-8/LF on every platform.
+tests/fixtures/logging-format.txt text eol=lf

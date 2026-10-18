@@ -39,13 +39,30 @@ fn shared_golden_bytes() {
             Level::Info,
             "net]\n",
             Some(("/workspace/project/src/client.cpp", 42)),
-            "secret-long\r\nnext\t\x1b[31m\r",
+            "secret-long\r\nnext\t\x1b[31m",
         )
         .0;
-    actual += &formatter.render(time, Level::Info, "", None, "").0;
+    actual += &formatter
+        .render(time, Level::Info, "", None, "metadata absent")
+        .0;
     assert_eq!(
         actual.as_bytes(),
         include_bytes!("../tests/fixtures/logging-format.txt")
+    );
+}
+
+#[test]
+fn empty_messages_and_trailing_newlines_are_preserved() {
+    let formatter = Formatter::default();
+    let time = UNIX_EPOCH + Duration::from_millis(123);
+    let prefix = "1970-01-01T00:00:00.123Z [INFO] [app] [unknown:?] ";
+    assert_eq!(
+        formatter.render(time, Level::Info, "", None, "").0,
+        format!("{prefix}\n")
+    );
+    assert_eq!(
+        formatter.render(time, Level::Info, "", None, "x\r").0,
+        format!("{prefix}x\n{prefix}\n")
     );
 }
 
@@ -80,7 +97,7 @@ fn rotation_preserves_exact_boundary_unicode_and_restart() {
             "é",
         )
         .0;
-    for _ in 0..5 {
+    for _ in 0..7 {
         let mut writer = RollingWriter::new(&path, text.len() as u64 * 2, 2).unwrap();
         writer.write_all(text.as_bytes()).unwrap();
         writer.flush().unwrap();
@@ -102,25 +119,16 @@ fn oversized_records_remain_intact_without_empty_backups() {
     let directory = tempfile::tempdir().unwrap();
     for name in ["large.log", "noextension", ".hidden"] {
         let path = directory.path().join(name);
-        let mut writer = RollingWriter::new(&path, 1, 1).unwrap();
-        writer.write_all(b"complete record").unwrap();
-        assert_eq!(
-            std::fs::read_dir(directory.path()).unwrap().count(),
-            if name == "large.log" {
-                1
-            } else if name == "noextension" {
-                3
-            } else {
-                5
-            }
-        );
-        writer.write_all(b"next").unwrap();
-        drop(writer);
         let backup = match name {
             "large.log" => "large.1.log",
             "noextension" => "noextension.1",
             _ => ".hidden.1",
         };
+        let mut writer = RollingWriter::new(&path, 1, 1).unwrap();
+        writer.write_all(b"complete record").unwrap();
+        assert!(!directory.path().join(backup).exists());
+        writer.write_all(b"next").unwrap();
+        drop(writer);
         assert_eq!(
             std::fs::read(directory.path().join(backup)).unwrap(),
             b"complete record"
