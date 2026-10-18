@@ -82,6 +82,16 @@ TEST(LoggingFormat, ResolvesProjectRootWithoutWorkingDirectory) {
   EXPECT_EQ(logging::source_path("", ""), "unknown");
 }
 
+#ifdef _MSC_VER
+TEST(LoggingFormat, RejectsTimestampsOutsideTheMsvcUtcRange) {
+  logging::Formatter formatter;
+  spdlog::details::log_msg record {spdlog::log_clock::time_point(-1s), {}, "clock", spdlog::level::info, "invalid timestamp"};
+  spdlog::memory_buf_t output;
+  EXPECT_THROW(formatter.format(record, output), std::out_of_range);
+  EXPECT_EQ(output.size(), 0);
+}
+#endif
+
 TEST_F(LoggingTest, RotatesByUtf8BytesAndRetainsBackupsAcrossRestart) {
   const auto path = directory / "application.log";
   logging::Formatter formatter;

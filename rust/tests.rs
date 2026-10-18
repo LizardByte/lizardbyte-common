@@ -242,3 +242,35 @@ fn invalid_limits_and_open_failures_are_reported() {
     sink.flush().unwrap();
     assert!(logging::console_sink().is_ok());
 }
+
+#[test]
+fn invalid_paths_and_blocked_parent_directories_return_errors() {
+    // An empty relative path has no parent and must fail without creating a file.
+    assert!(RollingWriter::new("", 10, 1).is_err());
+    let directory = tempfile::tempdir().unwrap();
+    let parent = directory.path().join("not-a-directory");
+    std::fs::write(&parent, b"keep this file").unwrap();
+    assert!(RollingWriter::new(parent.join("app.log"), 10, 1).is_err());
+    assert_eq!(std::fs::read(parent).unwrap(), b"keep this file");
+}
+
+#[test]
+fn failed_rotation_preserves_records_and_recovers_after_the_obstruction_is_removed() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("recovery.log");
+    let backup = directory.path().join("recovery.1.log");
+    let mut writer = RollingWriter::new(&path, 3, 1).unwrap();
+    writer.write_all(b"one").unwrap();
+    std::fs::create_dir(&backup).unwrap();
+
+    assert!(writer.write_all(b"two").is_err());
+    assert_eq!(std::fs::read(&path).unwrap(), b"one");
+    // A failed rotation has already closed the handle, so flushing is a safe no-op.
+    writer.flush().unwrap();
+    std::fs::remove_dir(&backup).unwrap();
+
+    writer.write_all(b"two").unwrap();
+    writer.flush().unwrap();
+    assert_eq!(std::fs::read(backup).unwrap(), b"one");
+    assert_eq!(std::fs::read(path).unwrap(), b"two");
+}

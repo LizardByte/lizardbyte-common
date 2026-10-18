@@ -189,12 +189,12 @@ namespace lizardbyte::common::logging {
     sink->set_color(spdlog::level::err, 4);
     sink->set_color(spdlog::level::critical, 12);
 #else
-    sink->set_color(spdlog::level::trace, "\033[35m");
-    sink->set_color(spdlog::level::debug, "\033[34m");
-    sink->set_color(spdlog::level::info, "\033[32m");
-    sink->set_color(spdlog::level::warn, "\033[33m");
-    sink->set_color(spdlog::level::err, "\033[31m");
-    sink->set_color(spdlog::level::critical, "\033[1;31m");
+    sink->set_color(spdlog::level::trace, sink->magenta);
+    sink->set_color(spdlog::level::debug, sink->blue);
+    sink->set_color(spdlog::level::info, sink->green);
+    sink->set_color(spdlog::level::warn, sink->yellow);
+    sink->set_color(spdlog::level::err, sink->red);
+    sink->set_color(spdlog::level::critical, sink->red_bold);
 #endif
     return sink;
   }
