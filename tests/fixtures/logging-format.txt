@@ -1,0 +1,10 @@
+1970-01-01T00:00:00.123Z [TRACE] [network] [src/client.cpp:42] héllo
+1970-01-01T00:00:00.123Z [DEBUG] [network] [src/client.cpp:42] héllo
+1970-01-01T00:00:00.123Z [INFO] [network] [src/client.cpp:42] héllo
+1970-01-01T00:00:00.123Z [WARN] [network] [src/client.cpp:42] héllo
+1970-01-01T00:00:00.123Z [ERROR] [network] [src/client.cpp:42] héllo
+1970-01-01T00:00:00.123Z [CRITICAL] [network] [src/client.cpp:42] héllo
+1970-01-01T00:00:00.123Z [INFO] [net\x5d\x0a] [src/client.cpp:42] ***
+1970-01-01T00:00:00.123Z [INFO] [net\x5d\x0a] [src/client.cpp:42] next\x09\x1b[31m
+1970-01-01T00:00:00.123Z [INFO] [net\x5d\x0a] [src/client.cpp:42] 
+1970-01-01T00:00:00.123Z [INFO] [app] [unknown:?] 

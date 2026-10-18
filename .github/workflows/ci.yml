@@ -352,11 +352,35 @@ jobs:
 
       - name: Install
         if: matrix.kind != 'msvc'
-        run: cmake --install cmake-build-ci --prefix cmake-build-ci/install
+        run: |
+          cmake -S . -B cmake-build-install -G Ninja -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF \
+            -DLIZARDBYTE_COMMON_INSTALL=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build cmake-build-install --parallel 2
+          cmake --install cmake-build-install --prefix cmake-build-install/install
 
       - name: Install MSVC
         if: matrix.kind == 'msvc'
-        run: cmake --install cmake-build-ci --config Debug --prefix cmake-build-ci/install
+        run: |
+          cmake -S . -B cmake-build-install -A x64 -DBUILD_DOCS=OFF -DBUILD_TESTS=OFF `
+            -DLIZARDBYTE_COMMON_INSTALL=ON
+          cmake --build cmake-build-install --config Release --parallel 2
+          cmake --install cmake-build-install --config Release --prefix cmake-build-install/install
+
+      - name: Test installed consumer
+        if: matrix.kind != 'msvc'
+        run: |
+          cmake -S tests/consumer -B cmake-build-consumer -G Ninja \
+            -DCMAKE_PREFIX_PATH="${GITHUB_WORKSPACE}/cmake-build-install/install"
+          cmake --build cmake-build-consumer
+          ./cmake-build-consumer/logging_consumer
+
+      - name: Test installed consumer MSVC
+        if: matrix.kind == 'msvc'
+        run: |
+          cmake -S tests/consumer -B cmake-build-consumer -A x64 `
+            -DCMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/cmake-build-install/install"
+          cmake --build cmake-build-consumer --config Debug
+          ./cmake-build-consumer/Debug/logging_consumer.exe
 
       - name: Upload report artifact
         if: >-
@@ -371,6 +395,62 @@ jobs:
           name: reports-${{ matrix.name }}
           path: cmake-build-ci/reports
           if-no-files-found: error
+
+  rust:
+    name: Rust (${{ matrix.os }})
+    needs:
+      - release-setup
+    permissions:
+      contents: read
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    env:
+      RUSTDOCFLAGS: -D warnings
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Set up Rust
+        run: |
+          rustup toolchain install stable --profile minimal --component clippy,rustfmt,llvm-tools-preview --no-self-update
+          rustup default stable
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test --locked --all-targets
+
+      - name: Documentation
+        run: cargo doc --locked --no-deps
+
+      - name: Install coverage tool
+        if: runner.os == 'Linux'
+        run: cargo install cargo-llvm-cov --locked
+
+      - name: Rust coverage
+        if: runner.os == 'Linux'
+        run: cargo llvm-cov --locked --all-targets --cobertura --output-path coverage/rust-coverage.xml
+
+      - name: Upload Rust coverage
+        if: runner.os == 'Linux'
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5  # v7.1.1
+        with:
+          disable_search: true
+          fail_ci_if_error: true
+          files: ./coverage/rust-coverage.xml
+          flags: Linux-rust
+          report_type: coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   codecov:
     name: Codecov (${{ matrix.flag }})
@@ -441,6 +521,7 @@ jobs:
       - build
       - release-setup
       - pytest
+      - rust
     permissions: {}
     runs-on: ubuntu-latest
     steps:
