@@ -39,7 +39,7 @@ locale = [
     "babel==2.18.0",
 ]
 test-c = [
-    "gcovr==8.7",
+    "gcovr==8.8",
 ]
 test-python = [
     "pytest==9.2.0",
@@ -68,7 +68,7 @@ locale = [
     "babel==2.18.0",
 ]
 test-c = [
-    "gcovr==8.7",
+    "gcovr==8.8",
 ]
 test-python = [
     "pytest==9.2.0",
