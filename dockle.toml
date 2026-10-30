@@ -19,7 +19,7 @@ source = "."
 home = true
 
 [targets.doxygen]
-inputs = ["README.md", "src/include", "tests/support/include"]
+inputs = ["README.md", "docs/logging.md", "src/include", "tests/support/include"]
 extra_stylesheets = [
   "https://cdn.jsdelivr.net/npm/@lizardbyte/shared-web@2026.930.34219/dist/crowdin-dockle-css.css",
 ]
@@ -28,3 +28,10 @@ extra_javascript = [
   "docs/crowdin.js",
 ]
 main_page = "README.md"
+
+[[targets]]
+name = "rust-api"
+title = "lizardbyte-common Rust API"
+framework = "rustdoc"
+source = "."
+entry = "lizardbyte_common"
