@@ -1,0 +1,20 @@
+[package]
+name = "lizardbyte-common"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Shared logging policy for LizardByte applications"
+license = "MIT"
+repository = "https://github.com/LizardByte/lizardbyte-common"
+readme = "README.md"
+include = ["rust/**", "tests/fixtures/logging-format.txt", "docs/logging.md", "Cargo.toml", "Cargo.lock", "README.md", "LICENSE"]
+
+[lib]
+path = "rust/lib.rs"
+
+[dependencies]
+chrono = { version = "0.4.45", default-features = false, features = ["std"] }
+spdlog = { package = "spdlog-rs", version = "0.5.3", features = ["log", "source-location", "multi-thread"] }
+
+[dev-dependencies]
+tempfile = "3.23"

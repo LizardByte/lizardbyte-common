@@ -27,8 +27,18 @@ The current tooling includes Python-managed helpers, reusable GitHub workflows, 
 - `scripts/update_clang_format.py` runs `clang-format` across supported source directories.
 - `scripts/localize.py` updates gettext and Babel locale files.
 - `.github/workflows/localize.yml` runs the locale helper from GitHub Actions and opens localization update pull requests.
-- `lizardbyte::common` provides shared C++ helpers, starting with environment variable manipulation.
+- `lizardbyte::common` provides shared C++ environment helpers and spdlog logging support.
+- `lizardbyte_common.logging` provides Python standard-library logging handlers and formatting.
+- The `lizardbyte-common` Cargo crate provides Rust logging support over spdlog-rs.
 - `lizardbyte::test_support` provides shared GoogleTest fixtures and test macros for LizardByte C++ projects.
+
+## 📝 Shared Logging
+
+C++, Python, and Rust consumers share UTC millisecond timestamps, severity/category/source fields,
+project-root-relative locations, console colors, redaction, and 10 MiB rolling files with five backups.
+Use multiple named loggers with independently filtered console, file, callback/webhook, or native sinks.
+See the [logging contract and consumer examples](docs/logging.md), including the migration needs identified
+in every project listed in [roadmap issue 186](https://github.com/LizardByte/roadmap/issues/186).
 
 ## ⚙️ Python Tooling
 
@@ -61,9 +71,9 @@ git submodule update --init --recursive
 Configure, build, and test the C++ helpers with CMake:
 
 ```bash
-cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B build -S .
-cmake --build build --parallel
-ctest --test-dir build --output-on-failure
+cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B cmake-build-common -S .
+cmake --build cmake-build-common --parallel
+ctest --test-dir cmake-build-common --output-on-failure
 ```
 
 The C++ library exports the `lizardbyte::common` target and public headers under `lizardbyte/common/`.
@@ -94,8 +104,8 @@ TEST(MySuite, CapturesOutputUntilFailure) {
 Build the Doxygen documentation through Dockle:
 
 ```bash
-cmake -DBUILD_DOCS=ON -DBUILD_TESTS=OFF -B build/docs -S .
-cmake --build build/docs --target docs
+cmake -DBUILD_DOCS=ON -DBUILD_TESTS=OFF -B cmake-build-docs -S .
+cmake --build cmake-build-docs --target docs
 ```
 
 ## 📐 Consuming Projects
@@ -193,7 +203,7 @@ uv run --locked --only-group test-python pytest
 Run the C++ GoogleTest suite:
 
 ```bash
-cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B build -S .
-cmake --build build --parallel
-ctest --test-dir build --output-on-failure
+cmake -DBUILD_DOCS=OFF -DBUILD_TESTS=ON -B cmake-build-common -S .
+cmake --build cmake-build-common --parallel
+ctest --test-dir cmake-build-common --output-on-failure
 ```

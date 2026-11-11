@@ -61,6 +61,7 @@ endif()
 # Library code is located here When building tests this must be after the
 # coverage flags are set
 #
+include(cmake/logging.cmake)
 add_subdirectory(src)
 
 #

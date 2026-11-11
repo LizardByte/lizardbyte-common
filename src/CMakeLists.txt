@@ -2,13 +2,15 @@ add_library(lizardbyte_common STATIC)
 add_library(lizardbyte::common ALIAS lizardbyte_common)
 
 target_sources(lizardbyte_common
-               PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/common/env.cpp")
+               PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/common/env.cpp"
+                       "${CMAKE_CURRENT_SOURCE_DIR}/common/logging.cpp")
 
 target_include_directories(
   lizardbyte_common PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/include>
                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_compile_features(lizardbyte_common PUBLIC cxx_std_17)
+target_link_libraries(lizardbyte_common PUBLIC spdlog::spdlog)
 set_target_properties(
   lizardbyte_common PROPERTIES EXPORT_NAME common OUTPUT_NAME lizardbyte-common)
 

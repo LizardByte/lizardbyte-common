@@ -301,6 +301,9 @@ __marimo__/
 # Project specific
 #
 
+# Rust
+/target/
+
 # Dockle
 /.dockle/
 /_site/
