@@ -81,7 +81,7 @@ Repository = "https://github.com/LizardByte/lizardbyte-common"
 Issues = "https://github.com/LizardByte/lizardbyte-common/issues"
 
 [tool.setuptools]
-packages = ["scripts"]
+packages = ["scripts", "lizardbyte_common"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -96,6 +96,7 @@ addopts = [
     "--color=yes",
     "-p", "no:cacheprovider",
     "--cov=scripts",
+    "--cov=lizardbyte_common",
     "--cov-report=term-missing",
     "--cov-report=xml:coverage/python-coverage.xml",
     "--cov-fail-under=100",
@@ -107,7 +108,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["scripts"]
+source = ["scripts", "lizardbyte_common"]
 omit = [
     "*/tests/*",
     "*/__pycache__/*",

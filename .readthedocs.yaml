@@ -10,6 +10,7 @@ build:
   tools:
     nodejs: "26"
     python: "miniforge3-26.3"
+    rust: latest
   jobs:
     build:
       html:
