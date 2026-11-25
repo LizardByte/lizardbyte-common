@@ -36,7 +36,7 @@ lint-python = [
     "flake8==7.5.0",
 ]
 locale = [
-    "babel==2.18.0",
+    "babel==2.19.0",
 ]
 test-c = [
     "gcovr==8.8",
@@ -65,7 +65,7 @@ lint-python = [
     "flake8==7.5.0",
 ]
 locale = [
-    "babel==2.18.0",
+    "babel==2.19.0",
 ]
 test-c = [
     "gcovr==8.8",
